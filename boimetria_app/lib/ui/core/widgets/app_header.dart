@@ -1,0 +1,57 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+
+import '../themes/app_colors.dart';
+
+class AppHeader extends StatelessWidget implements PreferredSizeWidget {
+  const AppHeader({super.key, this.actions});
+
+  final List<Widget>? actions;
+
+  @override
+  Widget build(BuildContext context) {
+    final text = Theme.of(context).textTheme;
+
+    return AppBar(
+      backgroundColor: AppColors.appbar,
+      foregroundColor: AppColors.text,
+      elevation: 0,
+      titleSpacing: 20,
+      title: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 46,
+            height: 46,
+            padding: const EdgeInsets.all(2),
+            decoration: BoxDecoration(
+              color: AppColors.primary,
+              borderRadius: BorderRadius.circular(13),
+            ),
+            child: SvgPicture.asset('assets/logos/boimetria-marca-branca.svg'),
+          ),
+          SizedBox(width: 10),
+          Column(
+            children: [
+              Text(
+                "Boimetria",
+                style: text.titleLarge?.copyWith(fontWeight: FontWeight.w800),
+              ),
+              Text(
+                'PELO FOCINHO',
+                style: text.labelSmall?.copyWith(
+                  color: AppColors.primary,
+                  letterSpacing: 1.5,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+      actions: actions,
+    );
+  }
+
+  @override
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+}
