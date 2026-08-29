@@ -1,9 +1,19 @@
 import 'package:flutter/material.dart';
 
-import '../themes/app_colors.dart';
+import '../../core/themes/app_colors.dart';
 
-class ActionCard extends StatelessWidget {
-  const ActionCard._({
+class SheetOptionTile extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String description;
+  final VoidCallback onTap;
+  final Color backgroundColor;
+  final Color foregroundColor;
+  final Color? borderColor;
+
+  static const double _iconSize = 40;
+
+  const SheetOptionTile._({
     super.key,
     required this.icon,
     required this.title,
@@ -11,12 +21,10 @@ class ActionCard extends StatelessWidget {
     required this.onTap,
     required this.backgroundColor,
     required this.foregroundColor,
-    this.iconPadding = EdgeInsets.zero,
     this.borderColor,
-    this.iconBackgroundColor,
   });
 
-  const ActionCard.filled({
+  const SheetOptionTile.filled({
     Key? key,
     required IconData icon,
     required String title,
@@ -32,7 +40,7 @@ class ActionCard extends StatelessWidget {
          foregroundColor: Colors.white,
        );
 
-  const ActionCard.outlined({
+  const SheetOptionTile.outlined({
     Key? key,
     required IconData icon,
     required String title,
@@ -49,22 +57,9 @@ class ActionCard extends StatelessWidget {
          borderColor: AppColors.text,
        );
 
-  final IconData icon;
-  final String title;
-  final String description;
-  final VoidCallback onTap;
-  final Color backgroundColor;
-  final Color foregroundColor;
-  final EdgeInsetsGeometry iconPadding;
-
-  static const double _iconSize = 40;
-  final Color? borderColor;
-  final Color? iconBackgroundColor;
-
   @override
   Widget build(BuildContext context) {
     final text = Theme.of(context).textTheme;
-
     return Material(
       color: backgroundColor,
       shape: RoundedRectangleBorder(
@@ -78,29 +73,24 @@ class ActionCard extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(  
+          padding: const EdgeInsets.all(26),
+          child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                padding: iconPadding,
-                decoration: BoxDecoration(
-                  color: iconBackgroundColor,
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Icon(icon, color: foregroundColor, size: _iconSize),
-              ),
-              const SizedBox(height: 10),
-              Text(
-                title,
-                style: text.headlineMedium?.copyWith(color: foregroundColor),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                description,
-                style: text.bodyLarge?.copyWith(
-                  color: foregroundColor.withValues(alpha: 0.9),
-                ),
+              Icon(icon, color: foregroundColor, size: _iconSize),
+              const SizedBox(width: 10),
+
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: text.headlineSmall?.copyWith(color: foregroundColor),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(description,
+                  style: text.bodyLarge?.copyWith(color: foregroundColor.withValues(alpha: 0.9)),)
+                ],
               ),
             ],
           ),

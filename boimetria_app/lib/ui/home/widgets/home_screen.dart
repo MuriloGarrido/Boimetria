@@ -1,9 +1,12 @@
-
 import 'package:boimetria/ui/core/widgets/action_card.dart';
 import 'package:boimetria/ui/core/widgets/app_header.dart';
 import 'package:boimetria/ui/core/widgets/header_icon_button.dart';
 import 'package:boimetria/ui/home/widgets/greeting_header.dart';
+import 'package:boimetria/domain/models/identify/identify_input.dart';
+import 'package:boimetria/ui/identify/widgets/image_source_sheet.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -36,19 +39,35 @@ class HomeScreen extends StatelessWidget {
                 title: "Quem é esse boi?",
                 description:
                     "Aponte a câmera no focinho — o app diz o brinco na hora",
-                onTap: () {},
+                onTap: () => _onIdentifyTap(context),
               ),
               ActionCard.outlined(
                 icon: Icons.add,
                 title: "Cadastrar um animal",
                 description:
                     "Bezerro novo ou animal comprado que ainda não está no rebanho",
-                onTap: () {},
+                onTap: () => context.push('/register'),
               ),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Future<void> _onIdentifyTap(BuildContext context) async {
+    final source = await ImageSourceSheet.show(context);
+    if (source == null) return;
+
+    final image = await ImagePicker().pickImage(source: source);
+    if (image == null) return;
+
+    final bytes = await image.readAsBytes();
+    if (!context.mounted) return;
+
+    context.push(
+      '/identify',
+      extra: IdentifyInput(bytes: bytes, kind: ImageKind.raw),
     );
   }
 }

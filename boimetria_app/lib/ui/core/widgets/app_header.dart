@@ -23,19 +23,24 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
           Container(
             width: 46,
             height: 46,
-            padding: const EdgeInsets.all(2),
+            padding: const EdgeInsets.all(6),
             decoration: BoxDecoration(
               color: AppColors.primary,
               borderRadius: BorderRadius.circular(13),
             ),
-            child: SvgPicture.asset('assets/logos/boimetria-marca-branca.svg'),
+            child: SvgPicture.asset('assets/logos/boimetria-branca.svg'),
           ),
-          SizedBox(width: 10),
+          const SizedBox(width: 10),
           Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 "Boimetria",
-                style: text.titleLarge?.copyWith(fontWeight: FontWeight.w800),
+                style: text.titleLarge?.copyWith(
+                  fontWeight: FontWeight.w800,
+                  height: 1.0,
+                ),
               ),
               Text(
                 'PELO FOCINHO',

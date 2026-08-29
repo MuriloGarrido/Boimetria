@@ -7,5 +7,5 @@ abstract class AppColors {
   static const primary = Color(0xFF15803D); // verde Boimetria / match
   static const error = Color(0xFFC81E1E); // sem match / erro
   static const warning = Color(0xFFC05600); // aviso / re-scan
-  static const border = Color(0xFFE8E6E1); // bordas / desabilitado
+  static const border = Color(0xFFCFC9BF); // bordas / desabilitado
 }
