@@ -3,11 +3,7 @@ import 'package:flutter/material.dart';
 import '../themes/app_colors.dart';
 
 class HeaderIconButton extends StatelessWidget {
-  const HeaderIconButton({
-    super.key,
-    required this.icon,
-    required this.onTap,
-  });
+  const HeaderIconButton({super.key, required this.icon, required this.onTap});
 
   final IconData icon;
   final VoidCallback onTap;

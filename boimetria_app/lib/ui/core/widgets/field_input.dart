@@ -1,4 +1,5 @@
 import 'package:boimetria/ui/core/themes/app_colors.dart';
+import 'package:boimetria/ui/core/widgets/field_box.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -51,72 +52,36 @@ class _FieldInputState extends State<FieldInput> {
 
   @override
   Widget build(BuildContext context) {
-    final text = Theme.of(context).textTheme;
-    final valueStyle = widget.emphasis ? text.headlineSmall : text.titleMedium;
+    final valueStyle = FieldBox.valueStyle(context, widget.emphasis);
 
-    return Material(
-      color: Colors.white,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: BorderSide(
-          color: widget.emphasis ? AppColors.text : AppColors.border,
-          width: widget.emphasis ? 2.5 : 1.5,
-        ),
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-        child: Row(
-          children: [
-            Expanded(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text.rich(
-                    TextSpan(
-                      text: widget.label,
-                      style: text.labelMedium,
-                      children: [
-                        if (widget.required)
-                          const WidgetSpan(
-                            alignment: PlaceholderAlignment.middle,
-                            child: Padding(
-                              padding: EdgeInsets.only(left: 4),
-                              child: Icon(
-                                Icons.circle,
-                                size: 8,
-                                color: AppColors.error,
-                              ),
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
-                  TextField(
-                    controller: _controller,
-                    onChanged: widget.onChanged,
-                    keyboardType: widget.keyboardType,
-                    inputFormatters: widget.inputFormatters,
-                    style: valueStyle,
-                    decoration: InputDecoration.collapsed(
-                      hintText: widget.placeholder,
-                      hintStyle: valueStyle?.copyWith(color: AppColors.border),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            if (widget.suffix != null) ...[
-              const SizedBox(width: 10),
-              Text(
+    return FieldBox(
+      label: widget.label,
+      required: widget.required,
+      emphasis: widget.emphasis,
+      trailing: widget.suffix == null
+          ? null
+          : Padding(
+              padding: const EdgeInsets.only(left: 10),
+              child: Text(
                 widget.suffix!,
                 style: valueStyle?.copyWith(
                   fontSize: (valueStyle.fontSize ?? 16) + 3,
                 ),
               ),
-            ],
-          ],
+            ),
+      child: TextField(
+        controller: _controller,
+        onChanged: widget.onChanged,
+        keyboardType: widget.keyboardType,
+        inputFormatters: widget.inputFormatters,
+        style: valueStyle,
+        decoration: InputDecoration(
+          hintText: widget.placeholder,
+          hintStyle: valueStyle?.copyWith(color: AppColors.border),
+          border: InputBorder.none,
+          isDense: true,
+          isCollapsed: true,
+          contentPadding: EdgeInsets.zero,
         ),
       ),
     );

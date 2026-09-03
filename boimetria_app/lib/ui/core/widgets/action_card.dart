@@ -79,7 +79,7 @@ class ActionCard extends StatelessWidget {
         onTap: onTap,
         child: Padding(
           padding: const EdgeInsets.all(20),
-          child: Column(  
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(

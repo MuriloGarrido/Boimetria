@@ -1,4 +1,5 @@
 import 'package:boimetria/ui/core/themes/app_colors.dart';
+import 'package:boimetria/ui/core/widgets/field_box.dart';
 import 'package:flutter/material.dart';
 
 /// Escolha única entre poucas opções, todas visíveis ao mesmo tempo.
@@ -34,59 +35,28 @@ class FieldChoice<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final text = Theme.of(context).textTheme;
-    final optionStyle = emphasis ? text.headlineSmall : text.titleMedium;
+    final optionStyle = FieldBox.valueStyle(context, emphasis);
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border.all(
-          color: emphasis ? AppColors.text : AppColors.border,
-          width: emphasis ? 2.5 : 1.5,
-        ),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text.rich(
-            TextSpan(
-              text: label,
-              style: text.labelMedium,
-              children: [
-                if (required)
-                  const WidgetSpan(
-                    alignment: PlaceholderAlignment.middle,
-                    child: Padding(
-                      padding: EdgeInsets.only(left: 4),
-                      child: Icon(
-                        Icons.circle,
-                        size: 8,
-                        color: AppColors.error,
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 8),
-          Row(
-            spacing: 10,
-            children: [
-              for (final option in options)
-                Expanded(
-                  child: _Option(
-                    label: labelOf(option),
-                    selected: option == selected,
-                    style: optionStyle,
-                    onTap: () => onChanged(option),
-                  ),
+    return FieldBox(
+      label: label,
+      required: required,
+      emphasis: emphasis,
+      child: Padding(
+        padding: const EdgeInsets.only(top: 8),
+        child: Row(
+          spacing: 10,
+          children: [
+            for (final option in options)
+              Expanded(
+                child: _Option(
+                  label: labelOf(option),
+                  selected: option == selected,
+                  style: optionStyle,
+                  onTap: () => onChanged(option),
                 ),
-            ],
-          ),
-        ],
+              ),
+          ],
+        ),
       ),
     );
   }

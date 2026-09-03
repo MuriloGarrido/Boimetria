@@ -88,8 +88,12 @@ class SheetOptionTile extends StatelessWidget {
                     style: text.headlineSmall?.copyWith(color: foregroundColor),
                   ),
                   const SizedBox(width: 8),
-                  Text(description,
-                  style: text.bodyLarge?.copyWith(color: foregroundColor.withValues(alpha: 0.9)),)
+                  Text(
+                    description,
+                    style: text.bodyLarge?.copyWith(
+                      color: foregroundColor.withValues(alpha: 0.9),
+                    ),
+                  ),
                 ],
               ),
             ],

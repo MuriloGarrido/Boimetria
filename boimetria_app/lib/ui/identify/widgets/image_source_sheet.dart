@@ -1,4 +1,4 @@
-import 'package:boimetria/ui/core/themes/app_colors.dart';
+import 'package:boimetria/ui/core/widgets/app_button.dart';
 import 'package:boimetria/ui/identify/widgets/sheet_option_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -41,19 +41,10 @@ class ImageSourceSheet extends StatelessWidget {
             title: "Escolher da galeria",
             description: "Uma foto já tirada do focinho",
             onTap: () => Navigator.pop(context, ImageSource.gallery),
-          ),  
-          OutlinedButton(
+          ),
+          AppButton.outlined(
+            label: "CANCELAR",
             onPressed: () => Navigator.pop(context),
-            style: OutlinedButton.styleFrom(
-              foregroundColor: AppColors.text,
-              backgroundColor: Colors.white,
-              side: const BorderSide(color: AppColors.border, width: 2.5),
-              padding: const EdgeInsets.symmetric(vertical: 18),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
-            ),
-            child: Text("CANCELAR", style: text.headlineSmall,),
           ),
         ],
       ),

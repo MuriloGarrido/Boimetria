@@ -171,39 +171,39 @@ void main() {
 
   group('postprocess', () {
     test('converte do espaço 640 letterboxado para a imagem original', () {
-      final box = OnnxMuzzleDetectorService.postprocess(
+      final prediction = OnnxMuzzleDetectorService.postprocess(
         _output([_detection(200, 100, 300, 200, 0.9)]),
         _portraitLetterbox(),
       );
 
       // x: (200 - 160) / 0.64 = 62.5   |  y: (100 - 0) / 0.64 = 156.25
-      expect(box, isNotNull);
-      expect(box!.x, closeTo(62.5, 1e-9));
-      expect(box.y, closeTo(156.25, 1e-9));
-      expect(box.width, closeTo(156.25, 1e-9));
-      expect(box.height, closeTo(156.25, 1e-9));
+      expect(prediction, isNotNull);
+      expect(prediction!.box.x, closeTo(62.5, 1e-9));
+      expect(prediction.box.y, closeTo(156.25, 1e-9));
+      expect(prediction.box.width, closeTo(156.25, 1e-9));
+      expect(prediction.box.height, closeTo(156.25, 1e-9));
     });
 
     test('ignora detecção abaixo do limiar de confiança', () {
-      final box = OnnxMuzzleDetectorService.postprocess(
+      final prediction = OnnxMuzzleDetectorService.postprocess(
         _output([_detection(200, 100, 300, 200, 0.49)]),
         _portraitLetterbox(),
       );
 
-      expect(box, isNull);
+      expect(prediction, isNull);
     });
 
     test('devolve null quando não há detecção nenhuma', () {
-      final box = OnnxMuzzleDetectorService.postprocess(
+      final prediction = OnnxMuzzleDetectorService.postprocess(
         _output([]),
         _portraitLetterbox(),
       );
 
-      expect(box, isNull);
+      expect(prediction, isNull);
     });
 
     test('escolhe a detecção de maior score, não a primeira', () {
-      final box = OnnxMuzzleDetectorService.postprocess(
+      final prediction = OnnxMuzzleDetectorService.postprocess(
         _output([
           _detection(200, 100, 300, 200, 0.6),
           _detection(360, 100, 460, 200, 0.95),
@@ -213,41 +213,41 @@ void main() {
       );
 
       // A de score 0.95 começa em x = (360 - 160) / 0.64 = 312.5
-      expect(box, isNotNull);
-      expect(box!.x, closeTo(312.5, 1e-9));
+      expect(prediction, isNotNull);
+      expect(prediction!.box.x, closeTo(312.5, 1e-9));
     });
 
     test('clampa a caixa que passa da borda da imagem', () {
       // x1 = (0 - 160) / 0.64 = -250, fora da foto: tem que virar 0.
-      final box = OnnxMuzzleDetectorService.postprocess(
+      final prediction = OnnxMuzzleDetectorService.postprocess(
         _output([_detection(0, 0, 300, 200, 0.9)]),
         _portraitLetterbox(),
       );
 
-      expect(box, isNotNull);
-      expect(box!.x, 0.0);
-      expect(box.y, 0.0);
-      expect(box.width, closeTo(218.75, 1e-9));
+      expect(prediction, isNotNull);
+      expect(prediction!.box.x, 0.0);
+      expect(prediction.box.y, 0.0);
+      expect(prediction.box.width, closeTo(218.75, 1e-9));
     });
 
     test('devolve null quando a caixa fica inteiramente fora da imagem', () {
       // x1 e x2 negativos: depois do clamp os dois viram 0 e a caixa não
       // tem área — recortar isso estouraria no copyCrop.
-      final box = OnnxMuzzleDetectorService.postprocess(
+      final prediction = OnnxMuzzleDetectorService.postprocess(
         _output([_detection(0, 0, 100, 200, 0.9)]),
         _portraitLetterbox(),
       );
 
-      expect(box, isNull);
+      expect(prediction, isNull);
     });
 
     test('aceita score exatamente no limiar', () {
-      final box = OnnxMuzzleDetectorService.postprocess(
+      final prediction = OnnxMuzzleDetectorService.postprocess(
         _output([_detection(200, 100, 300, 200, 0.5)]),
         _portraitLetterbox(),
       );
 
-      expect(box, isNotNull);
+      expect(prediction, isNotNull);
     });
   });
 }

@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:boimetria/data/services/muzzle_detector_service.dart';
 import 'package:boimetria/domain/models/detection/muzzle_detection.dart';
+import 'package:boimetria/utils/percentage.dart';
 import 'package:boimetria/utils/result.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_onnxruntime/flutter_onnxruntime.dart';
@@ -30,7 +31,9 @@ class OnnxMuzzleDetectorService implements MuzzleDetectorService {
     try {
       final decoded = img.decodeImage(imageBytes);
       if (decoded == null) {
-        return Result.error(Exception('Não foi possível decodificar a imagem.'));
+        return Result.error(
+          Exception('Não foi possível decodificar a imagem.'),
+        );
       }
 
       // Foto de celular quase sempre vem com os pixels deitados + tag EXIF de
@@ -38,24 +41,24 @@ class OnnxMuzzleDetectorService implements MuzzleDetectorService {
       final original = img.bakeOrientation(decoded);
 
       final letterbox = preprocess(original);
-      inputTensor = await OrtValue.fromList(
-        letterbox.tensor,
-        [1, 3, _inputSize, _inputSize],
-      );
+      inputTensor = await OrtValue.fromList(letterbox.tensor, [
+        1,
+        3,
+        _inputSize,
+        _inputSize,
+      ]);
 
-      outputs = await _session.run({
-        _session.inputNames.first: inputTensor,
-      });
+      outputs = await _session.run({_session.inputNames.first: inputTensor});
 
-      final rawOutput =
-          await outputs[_session.outputNames.first]!.asList();
+      final rawOutput = await outputs[_session.outputNames.first]!.asList();
 
-      final boundingBox = postprocess(rawOutput, letterbox);
+      final prediction = postprocess(rawOutput, letterbox);
 
-      if (boundingBox == null) {
+      if (prediction == null) {
         return Result.ok(const MuzzleNotDetected());
       }
 
+      final boundingBox = prediction.box;
       final cropped = img.copyCrop(
         original,
         x: boundingBox.x.round(),
@@ -64,11 +67,14 @@ class OnnxMuzzleDetectorService implements MuzzleDetectorService {
         height: boundingBox.height.round(),
       );
 
-      return Result.ok(MuzzleDetected(
-        boundingBox: boundingBox,
-        fullImage: imageBytes,
-        croppedImage: img.encodeJpg(cropped),
-      ));
+      return Result.ok(
+        MuzzleDetected(
+          boundingBox: boundingBox,
+          fullImage: imageBytes,
+          croppedImage: img.encodeJpg(cropped),
+          confidence: Percentage(prediction.confidence),
+        ),
+      );
     } catch (e) {
       return Result.error(e is Exception ? e : Exception(e.toString()));
     } finally {
@@ -102,12 +108,7 @@ class OnnxMuzzleDetectorService implements MuzzleDetectorService {
 
     final canvas = img.Image(width: _inputSize, height: _inputSize);
     img.fill(canvas, color: img.ColorRgb8(114, 114, 114));
-    img.compositeImage(
-      canvas,
-      resized,
-      dstX: padX.round(),
-      dstY: padY.round(),
-    );
+    img.compositeImage(canvas, resized, dstX: padX.round(), dstY: padY.round());
 
     final rgbBytes = canvas.getBytes(order: img.ChannelOrder.rgb);
     final channelSize = _inputSize * _inputSize;
@@ -129,7 +130,10 @@ class OnnxMuzzleDetectorService implements MuzzleDetectorService {
   }
 
   @visibleForTesting
-  static BoundingBox? postprocess(List rawOutput, Letterbox letterbox) {
+  static ({BoundingBox box, double confidence})? postprocess(
+    List rawOutput,
+    Letterbox letterbox,
+  ) {
     final detections = rawOutput.first as List;
 
     List<double>? best;
@@ -156,7 +160,10 @@ class OnnxMuzzleDetectorService implements MuzzleDetectorService {
 
     if (x2 <= x1 || y2 <= y1) return null;
 
-    return BoundingBox(x: x1, y: y1, width: x2 - x1, height: y2 - y1);
+    return (
+      box: BoundingBox(x: x1, y: y1, width: x2 - x1, height: y2 - y1),
+      confidence: best[4],
+    );
   }
 }
 

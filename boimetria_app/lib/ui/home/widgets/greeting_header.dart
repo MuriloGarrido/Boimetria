@@ -5,14 +5,12 @@ class GreetingHeader extends StatelessWidget {
     super.key,
     required this.username,
     required this.farmName,
-    required this.animalCount
+    required this.animalCount,
   });
 
   final String username;
   final String farmName;
   final int animalCount;
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -21,11 +19,9 @@ class GreetingHeader extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-      Text("Bom dia, \n$username", style: text.headlineLarge,),
-      Text("$farmName . $animalCount animais", style: text.bodyLarge,)
-      ]
-     
-      
+        Text("Bom dia, \n$username", style: text.headlineLarge),
+        Text("$farmName . $animalCount animais", style: text.bodyLarge),
+      ],
     );
   }
 }
