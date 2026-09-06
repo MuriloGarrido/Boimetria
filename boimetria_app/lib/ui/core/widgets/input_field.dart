@@ -3,8 +3,8 @@ import 'package:boimetria/ui/core/widgets/field_box.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-class FieldInput extends StatefulWidget {
-  const FieldInput({
+class InputField extends StatefulWidget {
+  const InputField({
     super.key,
     required this.label,
     required this.placeholder,
@@ -30,14 +30,14 @@ class FieldInput extends StatefulWidget {
   final bool emphasis;
 
   @override
-  State<FieldInput> createState() => _FieldInputState();
+  State<InputField> createState() => _InputFieldState();
 }
 
-class _FieldInputState extends State<FieldInput> {
+class _InputFieldState extends State<InputField> {
   late final _controller = TextEditingController(text: widget.value);
 
   @override
-  void didUpdateWidget(FieldInput oldWidget) {
+  void didUpdateWidget(InputField oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.value != _controller.text) {
       _controller.text = widget.value ?? '';

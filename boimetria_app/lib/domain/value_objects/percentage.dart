@@ -3,8 +3,6 @@ class Percentage {
 
   final double value;
 
-  int get percent => (value * 100).round();
-
   bool operator >=(Percentage other) => value >= other.value;
   bool operator <(Percentage other) => value < other.value;
 

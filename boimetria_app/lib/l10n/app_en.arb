@@ -1,0 +1,64 @@
+{
+  "@@locale": "en",
+
+  "appName": "Boimetria",
+  "appTagline": "BY THE MUZZLE",
+
+  "homeQuestion": "What do you want to do?",
+  "homeIdentifyTitle": "Which one is this?",
+  "homeIdentifyDescription": "Point the camera at the muzzle — the app names the tag right away",
+  "homeRegisterTitle": "Register an animal",
+  "homeRegisterDescription": "A new calf, or one you bought that is not in the herd yet",
+
+  "imageSourceQuestion": "Where does the muzzle photo come from?",
+  "imageSourceCameraTitle": "Take a photo now",
+  "imageSourceCameraDescription": "The animal is in front of you",
+  "imageSourceGalleryTitle": "Pick from the gallery",
+  "imageSourceGalleryDescription": "A muzzle photo you already took",
+  "cancel": "CANCEL",
+
+  "registerTitle": "Register animal",
+  "registerSubtitle": "Tap a field to correct it. Then save.",
+  "registerSave": "SAVE",
+  "registerTagLabel": "TAG",
+  "registerTagPlaceholder": "Enter the number",
+  "registerSexLabel": "SEX",
+  "registerSexMale": "MALE",
+  "registerSexFemale": "FEMALE",
+  "registerEntryDateLabel": "ENTRY",
+  "registerBirthDateLabel": "BIRTH",
+  "registerWeightLabel": "WEIGHT",
+  "registerWeightPlaceholder": "Enter",
+  "unitKilogram": "kg",
+
+  "muzzleMissingTitle": "BIOMETRICS MISSING",
+  "muzzleMissingDescription": "Without the muzzle photo you cannot save",
+  "muzzleMissingAction": "READ MUZZLE",
+  "muzzleDetectingTitle": "READING THE MUZZLE",
+  "muzzleDetectingDescription": "Just a moment",
+  "muzzleConfidenceTitle": "BIOMETRICS {confidence}",
+  "@muzzleConfidenceTitle": {
+    "placeholders": {
+      "confidence": {
+        "type": "double",
+        "format": "percentPattern"
+      }
+    }
+  },
+  "muzzleOkDescription": "Ready to save",
+  "muzzleWeakDescription": "Minimum is {minimum} — take the photo again",
+  "@muzzleWeakDescription": {
+    "placeholders": {
+      "minimum": {
+        "type": "double",
+        "format": "percentPattern"
+      }
+    }
+  },
+  "muzzleRetakeAction": "RETAKE PHOTO",
+  "muzzleFailedTitle": "COULD NOT READ IT",
+  "muzzleRetryAction": "TRY AGAIN",
+
+  "dateFieldPlaceholder": "mm/dd/yyyy",
+  "dateFieldToday": "Today"
+}

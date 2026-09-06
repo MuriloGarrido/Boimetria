@@ -2,8 +2,8 @@ import 'package:boimetria/ui/core/themes/app_colors.dart';
 import 'package:boimetria/ui/core/widgets/field_box.dart';
 import 'package:flutter/material.dart';
 
-class FieldButton extends StatelessWidget {
-  const FieldButton({
+class PickerField extends StatelessWidget {
+  const PickerField({
     super.key,
     required this.label,
     required this.placeholder,
@@ -20,8 +20,6 @@ class FieldButton extends StatelessWidget {
   final bool required;
   final VoidCallback onTap;
   final bool emphasis;
-
-  /// Nulo = campo nao limpavel. Obrigatorio nao passa.
   final VoidCallback? onClear;
 
   @override

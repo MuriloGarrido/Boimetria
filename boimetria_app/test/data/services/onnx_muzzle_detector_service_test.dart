@@ -99,8 +99,11 @@ void main() {
       // padX = 160: as 160 primeiras colunas são padding puro.
       for (final x in [0, 80, 159]) {
         for (var c = 0; c < 3; c++) {
-          expect(_at(letterbox.tensor, c, x, 320), closeTo(_padValue, 1e-6),
-              reason: 'coluna $x, canal $c');
+          expect(
+            _at(letterbox.tensor, c, x, 320),
+            closeTo(_padValue, 1e-6),
+            reason: 'coluna $x, canal $c',
+          );
         }
       }
 
@@ -124,9 +127,14 @@ void main() {
       // Metade esquerda vermelha, metade direita azul: se as linhas e colunas
       // estiverem trocadas, os dois lados saem iguais.
       final image = _solid(_inputSize, _inputSize, 255, 0, 0);
-      img.fillRect(image,
-          x1: _inputSize ~/ 2, y1: 0, x2: _inputSize - 1, y2: _inputSize - 1,
-          color: img.ColorRgb8(0, 0, 255));
+      img.fillRect(
+        image,
+        x1: _inputSize ~/ 2,
+        y1: 0,
+        x2: _inputSize - 1,
+        y2: _inputSize - 1,
+        color: img.ColorRgb8(0, 0, 255),
+      );
 
       final tensor = OnnxMuzzleDetectorService.preprocess(image).tensor;
 
@@ -163,7 +171,8 @@ void main() {
       expect(
         mixed,
         greaterThan(_plane ~/ 2),
-        reason: 'quase nenhum pixel misturado — o copyResize provavelmente '
+        reason:
+            'quase nenhum pixel misturado — o copyResize provavelmente '
             'voltou ao Interpolation.nearest',
       );
     });

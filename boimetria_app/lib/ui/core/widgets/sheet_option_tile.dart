@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../core/themes/app_colors.dart';
+import '../themes/app_colors.dart';
 
 class SheetOptionTile extends StatelessWidget {
   final IconData icon;

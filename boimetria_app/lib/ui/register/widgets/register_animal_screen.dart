@@ -1,26 +1,37 @@
-import 'package:boimetria/domain/models/animal/animal.dart';
-import 'package:boimetria/domain/models/detection/muzzle_state.dart';
+import 'package:boimetria/domain/entities/animal.dart';
+import 'package:boimetria/ui/core/formatters/decimal_input_formatter.dart';
 import 'package:boimetria/ui/core/widgets/app_button.dart';
 import 'package:boimetria/ui/core/widgets/app_header.dart';
-import 'package:boimetria/ui/core/widgets/field_button.dart';
-import 'package:boimetria/ui/core/widgets/field_choice.dart';
-import 'package:boimetria/ui/core/widgets/field_input.dart';
+import 'package:boimetria/ui/core/widgets/choice_field.dart';
+import 'package:boimetria/ui/core/widgets/date_field.dart';
+import 'package:boimetria/ui/core/widgets/image_source_sheet.dart';
+import 'package:boimetria/ui/core/widgets/input_field.dart';
+import 'package:boimetria/ui/register/view_models/register_animal_view_model.dart';
 import 'package:boimetria/ui/register/widgets/muzzle_card.dart';
+import 'package:boimetria/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 
-class RegisterAnimalScreen extends StatelessWidget {
+class RegisterAnimalScreen extends ConsumerWidget {
   const RegisterAnimalScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final text = Theme.of(context).textTheme;
+    final l10n = AppLocalizations.of(context);
+    final state = ref.watch(registerAnimalProvider);
+    final vm = ref.read(registerAnimalProvider.notifier);
 
     return Scaffold(
       appBar: const AppHeader(),
       bottomNavigationBar: SafeArea(
         child: Padding(
           padding: const EdgeInsets.fromLTRB(20, 0, 20, 10),
-          child: AppButton.filled(label: "SALVAR", onPressed: () {}),
+          child: AppButton.filled(
+            label: l10n.registerSave,
+            onPressed: state.canSave ? () {} : null,
+          ),
         ),
       ),
       body: SingleChildScrollView(
@@ -29,105 +40,85 @@ class RegisterAnimalScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           spacing: 10,
           children: [
-            Text("Cadastrar animal", style: text.headlineLarge),
+            Text(l10n.registerTitle, style: text.headlineLarge),
             Text(
-              "Toque num campo para corrigir. Depois salve.",
+              l10n.registerSubtitle,
               style: text.bodyLarge,
             ),
-            MuzzleCard(state: const MuzzleMissing(), onRead: () {}),
-            FieldInput(
-              label: "IDENTIFICADOR",
-              placeholder: "Digite o número",
-              value: "BR-4822",
+            MuzzleCard(state: state.muzzle, onRead: () => _onRead(context, vm)),
+            InputField(
+              label: l10n.registerTagLabel,
+              placeholder: l10n.registerTagPlaceholder,
+              value: state.tag,
               required: true,
               emphasis: true,
-              onChanged: (_) {},
+              onChanged: vm.setTag,
             ),
-            FieldChoice<Sex>(
-              label: "SEXO",
+            ChoiceField<Sex>(
+              label: l10n.registerSexLabel,
               options: Sex.values,
               labelOf: (s) => switch (s) {
-                Sex.male => "MACHO",
-                Sex.female => "FÊMEA",
+                Sex.male => l10n.registerSexMale,
+                Sex.female => l10n.registerSexFemale,
               },
-              selected: Sex.male,
+              selected: state.sex,
               required: true,
-              onChanged: (_) {},
+              onChanged: vm.setSex,
             ),
             _Pair(
-              FieldButton(
-                label: "ENTRADA",
-                placeholder: "hoje",
-                value: "Hoje",
+              DateField(
+                label: l10n.registerEntryDateLabel,
+                value: state.entryDate,
+                firstDate: DateTime(2000),
+                lastDate: DateTime.now(),
                 required: true,
-                onTap: () {},
+                onChanged: vm.setEntryDate,
               ),
-              FieldButton(
-                label: "NASCIMENTO",
-                placeholder: "dd/mm/aaaa",
-                value: "14/03/2024",
-                onTap: () {},
-              ),
-            ),
-            _Pair(
-              FieldInput(
-                label: "PESO",
-                placeholder: "Digite",
-                value: "248",
-                suffix: "kg",
-                keyboardType: TextInputType.number,
-                onChanged: (_) {},
-              ),
-              FieldButton(
-                label: "RAÇA",
-                placeholder: "escolher",
-                value: "Nelore",
-                onTap: () {},
+              DateField(
+                label: l10n.registerBirthDateLabel,
+                value: state.birthDate,
+                firstDate: DateTime(2000),
+                lastDate: DateTime.now(),
+                onChanged: vm.setBirthDate,
               ),
             ),
             _Pair(
-              FieldButton(
-                label: "PELAGEM",
-                placeholder: "escolher",
-                value: "Branca",
-                onTap: () {},
-                onClear: () {},
+              InputField(
+                label: l10n.registerWeightLabel,
+                placeholder: l10n.registerWeightPlaceholder,
+                value: state.weightText,
+                suffix: l10n.unitKilogram,
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
+                inputFormatters: const [DecimalInputFormatter()],
+                onChanged: vm.setWeight,
               ),
-              FieldButton(
-                label: "PASTO",
-                placeholder: "escolher",
-                value: "Pasto 7",
-                onTap: () {},
-                onClear: () {},
-              ),
-            ),
-            _Pair(
-              FieldButton(
-                label: "MÃE",
-                placeholder: "buscar",
-                value: "BR-3110",
-                onTap: () {},
-                onClear: () {},
-              ),
-              FieldButton(
-                label: "PAI",
-                placeholder: "buscar",
-                value: "BR-2087",
-                onTap: () {},
-                onClear: () {},
-              ),
+              const SizedBox(),
             ),
           ],
         ),
       ),
     );
   }
+
+  Future<void> _onRead(
+    BuildContext context,
+    RegisterAnimalViewModel vm,
+  ) async {
+    final source = await ImageSourceSheet.show(context);
+    if (source == null) return;
+
+    final image = await ImagePicker().pickImage(source: source);
+    if (image == null) return;
+
+    vm.readMuzzle(await image.readAsBytes());
+  }
 }
 
 class _Pair extends StatelessWidget {
   const _Pair(this.left, this.right);
 
-  /// Acima disso os dois campos nao cabem lado a lado sem truncar o valor.
   static const _limiteDeEscala = 1.3;
 
   final Widget left;

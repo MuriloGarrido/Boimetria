@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../domain/models/identify/identify_input.dart';
+import 'package:boimetria/domain/entities/identify_input.dart';
 import '../core/widgets/app_header.dart';
 
 class IdentifyResultScreen extends StatelessWidget {

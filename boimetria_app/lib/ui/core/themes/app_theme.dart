@@ -4,6 +4,23 @@ import 'app_colors.dart';
 abstract class AppTheme {
   static ThemeData get light => ThemeData(
     useMaterial3: true,
+    colorScheme: ColorScheme.fromSeed(
+      seedColor: AppColors.primary,
+      // o que e' meu, fixo
+      primary: AppColors.primary,
+      error: AppColors.error,
+      onSurface: AppColors.text,
+      outline: AppColors.border,
+      // superficies neutras: o M3 as tingiria de verde
+      surface: AppColors.background,
+      surfaceTint: Colors.transparent,
+      surfaceBright: AppColors.background,
+      surfaceContainerLowest: AppColors.background,
+      surfaceContainerLow: AppColors.background,
+      surfaceContainer: AppColors.background,
+      surfaceContainerHigh: AppColors.background,
+      surfaceContainerHighest: AppColors.background,
+    ),
     scaffoldBackgroundColor: AppColors.background,
     appBarTheme: const AppBarTheme(color: AppColors.appbar),
     fontFamily: 'Archivo',

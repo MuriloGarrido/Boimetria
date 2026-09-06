@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-import 'package:boimetria/utils/percentage.dart';
+import 'package:boimetria/domain/value_objects/percentage.dart';
 
 class BoundingBox {
   const BoundingBox({
@@ -16,12 +16,8 @@ class BoundingBox {
   final double height;
 }
 
-sealed class MuzzleDetection {
-  const MuzzleDetection();
-}
-
-final class MuzzleDetected extends MuzzleDetection {
-  const MuzzleDetected({
+class MuzzleDetection {
+  const MuzzleDetection({
     required this.boundingBox,
     required this.fullImage,
     required this.croppedImage,
@@ -33,8 +29,4 @@ final class MuzzleDetected extends MuzzleDetection {
   final Uint8List croppedImage;
 
   final Percentage confidence;
-}
-
-final class MuzzleNotDetected extends MuzzleDetection {
-  const MuzzleNotDetected();
 }

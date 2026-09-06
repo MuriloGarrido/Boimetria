@@ -1,11 +1,12 @@
 import 'dart:typed_data';
 
-import 'package:boimetria/domain/models/detection/muzzle_detection.dart';
-import 'package:boimetria/domain/models/detection/muzzle_state.dart';
-import 'package:boimetria/domain/thresholds.dart';
+import 'package:boimetria/domain/entities/muzzle_detection.dart';
+import 'package:boimetria/ui/register/view_models/muzzle_state.dart';
+import 'package:boimetria/domain/value_objects/percentage.dart';
 import 'package:boimetria/ui/core/themes/app_colors.dart';
 import 'package:boimetria/ui/core/widgets/app_button.dart';
 import 'package:dotted_border/dotted_border.dart';
+import 'package:boimetria/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 const _radius = 16.0;
@@ -23,7 +24,11 @@ class MuzzleCard extends StatelessWidget {
     MuzzleMissing() => _Missing(onTap: onRead),
     MuzzleDetecting() => _Detecting(onTap: onRead),
     MuzzleCaptured(:final detection) => _Ok(detection, onTap: onRead),
-    MuzzleLowConfidence(:final detection) => _Weak(detection, onTap: onRead),
+    MuzzleLowConfidence(:final detection, :final minimum) => _Weak(
+      detection,
+      minimum,
+      onTap: onRead,
+    ),
     MuzzleFailed(:final reason) => _Failed(reason, onTap: onRead),
   };
 }
@@ -35,16 +40,18 @@ class _Missing extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
     return _Dashed(
       color: AppColors.warning,
       child: _Body(
         surface: AppColors.warningSurface,
         onTap: onTap,
         leading: const _EmptyBox(dashed: true),
-        title: "BIOMETRIA FALTANDO",
+        title: l10n.muzzleMissingTitle,
         color: AppColors.warning,
-        description: "Sem a foto do focinho não dá pra salvar",
-        action: const _Action(label: "LER FOCINHO"),
+        description: l10n.muzzleMissingDescription,
+        action: _Action(label: l10n.muzzleMissingAction),
       ),
     );
   }
@@ -57,6 +64,8 @@ class _Detecting extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
     return _Solid(
       color: AppColors.border,
       child: _Body(
@@ -64,9 +73,9 @@ class _Detecting extends StatelessWidget {
         onTap: onTap,
         centered: true,
         leading: const _SpinnerBox(),
-        title: "LENDO O FOCINHO",
+        title: l10n.muzzleDetectingTitle,
         color: AppColors.text,
-        description: "Aguarde um instante",
+        description: l10n.muzzleDetectingDescription,
       ),
     );
   }
@@ -75,54 +84,57 @@ class _Detecting extends StatelessWidget {
 class _Ok extends StatelessWidget {
   const _Ok(this.detection, {required this.onTap});
 
-  final MuzzleDetected detection;
+  final MuzzleDetection detection;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
     return _Solid(
       color: AppColors.primary,
       child: _Body(
         surface: AppColors.primarySurface,
         onTap: onTap,
         leading: _PhotoBox(detection.croppedImage),
-        title: "BIOMETRIA ${detection.confidence.percent}%",
+        title: l10n.muzzleConfidenceTitle(detection.confidence.value),
         color: AppColors.primary,
-        description:
-            "Mínimo é ${Thresholds.muzzleConfidence.percent}% — pode salvar",
+        description: l10n.muzzleOkDescription,
         bar: _ConfidenceBar(
           value: detection.confidence.value,
           color: AppColors.primary,
         ),
-        action: const _Action(label: "REFAZER FOTO", outlined: true),
+        action: _Action(label: l10n.muzzleRetakeAction, outlined: true),
       ),
     );
   }
 }
 
 class _Weak extends StatelessWidget {
-  const _Weak(this.detection, {required this.onTap});
+  const _Weak(this.detection, this.minimum, {required this.onTap});
 
-  final MuzzleDetected detection;
+  final MuzzleDetection detection;
+  final Percentage minimum;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
     return _Solid(
       color: AppColors.error,
       child: _Body(
         surface: AppColors.errorSurface,
         onTap: onTap,
         leading: _PhotoBox(detection.croppedImage),
-        title: "BIOMETRIA ${detection.confidence.percent}%",
+        title: l10n.muzzleConfidenceTitle(detection.confidence.value),
         color: AppColors.error,
-        description:
-            "Mínimo é ${Thresholds.muzzleConfidence.percent}% — refaça a foto",
+        description: l10n.muzzleWeakDescription(minimum.value),
         bar: _ConfidenceBar(
           value: detection.confidence.value,
           color: AppColors.error,
         ),
-        action: const _Action(label: "REFAZER FOTO"),
+        action: _Action(label: l10n.muzzleRetakeAction),
       ),
     );
   }
@@ -136,16 +148,18 @@ class _Failed extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
     return _Solid(
       color: AppColors.error,
       child: _Body(
         surface: AppColors.errorSurface,
         onTap: onTap,
         leading: const _EmptyBox(),
-        title: "NÃO DEU PRA LER",
+        title: l10n.muzzleFailedTitle,
         color: AppColors.error,
         description: reason,
-        action: const _Action(label: "TENTAR DE NOVO"),
+        action: _Action(label: l10n.muzzleRetryAction),
       ),
     );
   }
@@ -199,7 +213,10 @@ class _Body extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   spacing: 2,
                   children: [
-                    Text(title, style: text.titleMedium?.copyWith(color: color)),
+                    Text(
+                      title,
+                      style: text.titleMedium?.copyWith(color: color),
+                    ),
                     Text(
                       description,
                       maxLines: 2,

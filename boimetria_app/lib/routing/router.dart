@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../domain/models/identify/identify_input.dart';
+import 'package:boimetria/domain/entities/identify_input.dart';
 import '../ui/home/widgets/home_screen.dart';
 import '../ui/identify/identify_result_screen.dart';
 import '../ui/register/widgets/register_animal_screen.dart';

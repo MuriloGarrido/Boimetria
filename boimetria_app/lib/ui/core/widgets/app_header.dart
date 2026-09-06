@@ -1,3 +1,4 @@
+import 'package:boimetria/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -11,6 +12,7 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     final text = Theme.of(context).textTheme;
+    final l10n = AppLocalizations.of(context);
 
     return AppBar(
       backgroundColor: AppColors.appbar,
@@ -36,14 +38,14 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Boimetria",
+                l10n.appName,
                 style: text.titleLarge?.copyWith(
                   fontWeight: FontWeight.w800,
                   height: 1.0,
                 ),
               ),
               Text(
-                'PELO FOCINHO',
+                l10n.appTagline,
                 style: text.labelSmall?.copyWith(
                   color: AppColors.primary,
                   letterSpacing: 1.5,

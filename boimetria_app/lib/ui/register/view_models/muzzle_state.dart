@@ -1,4 +1,5 @@
-import 'package:boimetria/domain/models/detection/muzzle_detection.dart';
+import 'package:boimetria/domain/entities/muzzle_detection.dart';
+import 'package:boimetria/domain/value_objects/percentage.dart';
 
 sealed class MuzzleState {
   const MuzzleState();
@@ -15,13 +16,14 @@ final class MuzzleDetecting extends MuzzleState {
 final class MuzzleCaptured extends MuzzleState {
   const MuzzleCaptured(this.detection);
 
-  final MuzzleDetected detection;
+  final MuzzleDetection detection;
 }
 
 final class MuzzleLowConfidence extends MuzzleState {
-  const MuzzleLowConfidence(this.detection);
+  const MuzzleLowConfidence(this.detection, this.minimum);
 
-  final MuzzleDetected detection;
+  final MuzzleDetection detection;
+  final Percentage minimum;
 }
 
 final class MuzzleFailed extends MuzzleState {

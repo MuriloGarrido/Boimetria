@@ -1,25 +1,22 @@
 import 'dart:math' as math;
 
-import 'package:boimetria/data/services/muzzle_detector_service.dart';
-import 'package:boimetria/domain/models/detection/muzzle_detection.dart';
-import 'package:boimetria/utils/percentage.dart';
-import 'package:boimetria/utils/result.dart';
+import 'package:boimetria/domain/interfaces/services/muzzle_detector.dart';
+import 'package:boimetria/domain/entities/muzzle_detection.dart';
+import 'package:boimetria/domain/value_objects/percentage.dart';
+import 'package:boimetria/domain/shared/result.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_onnxruntime/flutter_onnxruntime.dart';
 import 'package:image/image.dart' as img;
 
 const _inputSize = 640;
-const _confidenceThreshold = 0.5;
 
 class OnnxMuzzleDetectorService implements MuzzleDetectorService {
   OnnxMuzzleDetectorService._(this._session);
 
   final OrtSession _session;
 
-  static Future<OnnxMuzzleDetectorService> load() async {
-    final session = await OnnxRuntime().createSessionFromAsset(
-      'assets/models/yolo.onnx',
-    );
+  static Future<OnnxMuzzleDetectorService> load(String modelAsset) async {
+    final session = await OnnxRuntime().createSessionFromAsset(modelAsset);
     return OnnxMuzzleDetectorService._(session);
   }
 
@@ -55,7 +52,7 @@ class OnnxMuzzleDetectorService implements MuzzleDetectorService {
       final prediction = postprocess(rawOutput, letterbox);
 
       if (prediction == null) {
-        return Result.ok(const MuzzleNotDetected());
+        return Result.error(Exception('Nenhuma caixa valida na saida do modelo.'));
       }
 
       final boundingBox = prediction.box;
@@ -68,7 +65,7 @@ class OnnxMuzzleDetectorService implements MuzzleDetectorService {
       );
 
       return Result.ok(
-        MuzzleDetected(
+        MuzzleDetection(
           boundingBox: boundingBox,
           fullImage: imageBytes,
           croppedImage: img.encodeJpg(cropped),
@@ -140,7 +137,6 @@ class OnnxMuzzleDetectorService implements MuzzleDetectorService {
     for (final detection in detections) {
       final values = (detection as List).cast<num>();
       final score = values[4].toDouble();
-      if (score < _confidenceThreshold) continue;
       if (best == null || score > best[4]) {
         best = values.map((value) => value.toDouble()).toList();
       }

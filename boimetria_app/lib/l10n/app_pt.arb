@@ -1,0 +1,70 @@
+{
+  "@@locale": "pt",
+
+  "appName": "Boimetria",
+  "@appName": {
+    "description": "Nome do app, no cabecalho"
+  },
+  "appTagline": "PELO FOCINHO",
+  "@appTagline": {
+    "description": "Subtitulo do cabecalho"
+  },
+
+  "homeQuestion": "O que você quer fazer?",
+  "homeIdentifyTitle": "Quem é esse boi?",
+  "homeIdentifyDescription": "Aponte a câmera no focinho — o app diz o brinco na hora",
+  "homeRegisterTitle": "Cadastrar um animal",
+  "homeRegisterDescription": "Bezerro novo ou animal comprado que ainda não está no rebanho",
+
+  "imageSourceQuestion": "De onde vem a foto do focinho?",
+  "imageSourceCameraTitle": "Tirar foto agora",
+  "imageSourceCameraDescription": "O animal está na sua frente",
+  "imageSourceGalleryTitle": "Escolher da galeria",
+  "imageSourceGalleryDescription": "Uma foto já tirada do focinho",
+  "cancel": "CANCELAR",
+
+  "registerTitle": "Cadastrar animal",
+  "registerSubtitle": "Toque num campo para corrigir. Depois salve.",
+  "registerSave": "SALVAR",
+  "registerTagLabel": "IDENTIFICADOR",
+  "registerTagPlaceholder": "Digite o número",
+  "registerSexLabel": "SEXO",
+  "registerSexMale": "MACHO",
+  "registerSexFemale": "FÊMEA",
+  "registerEntryDateLabel": "ENTRADA",
+  "registerBirthDateLabel": "NASCIMENTO",
+  "registerWeightLabel": "PESO",
+  "registerWeightPlaceholder": "Digite",
+  "unitKilogram": "kg",
+
+  "muzzleMissingTitle": "BIOMETRIA FALTANDO",
+  "muzzleMissingDescription": "Sem a foto do focinho não dá pra salvar",
+  "muzzleMissingAction": "LER FOCINHO",
+  "muzzleDetectingTitle": "LENDO O FOCINHO",
+  "muzzleDetectingDescription": "Aguarde um instante",
+  "muzzleConfidenceTitle": "BIOMETRIA {confidence}",
+  "@muzzleConfidenceTitle": {
+    "placeholders": {
+      "confidence": {
+        "type": "double",
+        "format": "percentPattern"
+      }
+    }
+  },
+  "muzzleOkDescription": "Pode salvar",
+  "muzzleWeakDescription": "Mínimo é {minimum} — refaça a foto",
+  "@muzzleWeakDescription": {
+    "placeholders": {
+      "minimum": {
+        "type": "double",
+        "format": "percentPattern"
+      }
+    }
+  },
+  "muzzleRetakeAction": "REFAZER FOTO",
+  "muzzleFailedTitle": "NÃO DEU PRA LER",
+  "muzzleRetryAction": "TENTAR DE NOVO",
+
+  "dateFieldPlaceholder": "dd/mm/aaaa",
+  "dateFieldToday": "Hoje"
+}

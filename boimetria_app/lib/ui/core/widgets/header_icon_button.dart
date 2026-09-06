@@ -6,7 +6,7 @@ class HeaderIconButton extends StatelessWidget {
   const HeaderIconButton({super.key, required this.icon, required this.onTap});
 
   final IconData icon;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {

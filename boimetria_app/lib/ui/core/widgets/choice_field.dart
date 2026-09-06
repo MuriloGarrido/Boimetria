@@ -7,8 +7,8 @@ import 'package:flutter/material.dart';
 /// Genérico em vez de preso a `Enum`: amarrar a enum não dispensaria o
 /// [labelOf] e fecharia a porta para opções que não são enum. Pensado para
 /// 2-3 opções.
-class FieldChoice<T> extends StatelessWidget {
-  const FieldChoice({
+class ChoiceField<T> extends StatelessWidget {
+  const ChoiceField({
     super.key,
     required this.label,
     required this.options,
