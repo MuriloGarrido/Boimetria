@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:boimetria/domain/entities/muzzle_detection.dart';
 import 'package:boimetria/domain/value_objects/percentage.dart';
 
@@ -24,6 +26,12 @@ final class MuzzleLowConfidence extends MuzzleState {
 
   final MuzzleDetection detection;
   final Percentage minimum;
+}
+
+final class MuzzleAbsent extends MuzzleState {
+  const MuzzleAbsent(this.photo);
+
+  final Uint8List photo;
 }
 
 final class MuzzleFailed extends MuzzleState {

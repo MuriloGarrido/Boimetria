@@ -1,0 +1,4 @@
+# Research workspaces: datasets, venvs, checkpoints and model exports.
+# Kept out of the repo for size; the app loads the models from assets/.
+/cattlemuzzlenet/*
+/yolo/*

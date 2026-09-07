@@ -1,12 +1,13 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 
-import 'package:boimetria/domain/entities/identify_input.dart';
 import '../core/widgets/app_header.dart';
 
 class IdentifyResultScreen extends StatelessWidget {
-  const IdentifyResultScreen({super.key, required this.input});
+  const IdentifyResultScreen({super.key, required this.photo});
 
-  final IdentifyInput input;
+  final Uint8List photo;
 
   @override
   Widget build(BuildContext context) {

@@ -29,6 +29,7 @@ class MuzzleCard extends StatelessWidget {
       minimum,
       onTap: onRead,
     ),
+    MuzzleAbsent(:final photo) => _Absent(photo, onTap: onRead),
     MuzzleFailed(:final reason) => _Failed(reason, onTap: onRead),
   };
 }
@@ -135,6 +136,31 @@ class _Weak extends StatelessWidget {
           color: AppColors.error,
         ),
         action: _Action(label: l10n.muzzleRetakeAction),
+      ),
+    );
+  }
+}
+
+class _Absent extends StatelessWidget {
+  const _Absent(this.photo, {required this.onTap});
+
+  final Uint8List photo;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
+    return _Solid(
+      color: AppColors.warning,
+      child: _Body(
+        surface: AppColors.warningSurface,
+        onTap: onTap,
+        leading: _PhotoBox(photo),
+        title: l10n.muzzleAbsentTitle,
+        color: AppColors.warning,
+        description: l10n.muzzleAbsentDescription,
+        action: _Action(label: l10n.muzzleAbsentAction),
       ),
     );
   }

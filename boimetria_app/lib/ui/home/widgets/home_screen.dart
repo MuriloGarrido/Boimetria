@@ -2,7 +2,6 @@ import 'package:boimetria/ui/core/widgets/action_card.dart';
 import 'package:boimetria/ui/core/widgets/app_header.dart';
 import 'package:boimetria/ui/core/widgets/header_icon_button.dart';
 import 'package:boimetria/ui/core/widgets/app_select_menu.dart';
-import 'package:boimetria/domain/entities/identify_input.dart';
 import 'package:boimetria/ui/core/widgets/image_source_sheet.dart';
 import 'package:boimetria/l10n/app_locale.dart';
 import 'package:boimetria/l10n/generated/app_localizations.dart';
@@ -92,9 +91,6 @@ class HomeScreen extends ConsumerWidget {
     final bytes = await image.readAsBytes();
     if (!context.mounted) return;
 
-    context.push(
-      '/identify',
-      extra: IdentifyInput(bytes: bytes, kind: ImageKind.raw),
-    );
+    context.push('/identify', extra: bytes);
   }
 }

@@ -1,7 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:boimetria/domain/entities/identify_input.dart';
+import 'dart:typed_data';
+
 import '../ui/home/widgets/home_screen.dart';
 import '../ui/identify/identify_result_screen.dart';
 import '../ui/register/widgets/register_animal_screen.dart';
@@ -16,8 +17,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/identify',
         builder: (context, state) {
-          final input = state.extra as IdentifyInput;
-          return IdentifyResultScreen(input: input);
+          return IdentifyResultScreen(photo: state.extra as Uint8List);
         },
       ),
       GoRoute(

@@ -308,6 +308,24 @@ abstract class AppLocalizations {
   /// **'REFAZER FOTO'**
   String get muzzleRetakeAction;
 
+  /// No description provided for @muzzleAbsentTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'NÃO ACHEI O FOCINHO'**
+  String get muzzleAbsentTitle;
+
+  /// No description provided for @muzzleAbsentDescription.
+  ///
+  /// In pt, this message translates to:
+  /// **'Aponte a câmera no focinho do animal'**
+  String get muzzleAbsentDescription;
+
+  /// No description provided for @muzzleAbsentAction.
+  ///
+  /// In pt, this message translates to:
+  /// **'TIRAR OUTRA FOTO'**
+  String get muzzleAbsentAction;
+
   /// No description provided for @muzzleFailedTitle.
   ///
   /// In pt, this message translates to:

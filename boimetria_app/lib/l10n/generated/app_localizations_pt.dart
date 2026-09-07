@@ -129,6 +129,15 @@ class AppLocalizationsPt extends AppLocalizations {
   String get muzzleRetakeAction => 'REFAZER FOTO';
 
   @override
+  String get muzzleAbsentTitle => 'NÃO ACHEI O FOCINHO';
+
+  @override
+  String get muzzleAbsentDescription => 'Aponte a câmera no focinho do animal';
+
+  @override
+  String get muzzleAbsentAction => 'TIRAR OUTRA FOTO';
+
+  @override
   String get muzzleFailedTitle => 'NÃO DEU PRA LER';
 
   @override

@@ -62,6 +62,9 @@
     }
   },
   "muzzleRetakeAction": "REFAZER FOTO",
+  "muzzleAbsentTitle": "NÃO ACHEI O FOCINHO",
+  "muzzleAbsentDescription": "Aponte a câmera no focinho do animal",
+  "muzzleAbsentAction": "TIRAR OUTRA FOTO",
   "muzzleFailedTitle": "NÃO DEU PRA LER",
   "muzzleRetryAction": "TENTAR DE NOVO",
 

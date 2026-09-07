@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:boimetria/domain/interfaces/services/muzzle_detector.dart';
 import 'package:boimetria/domain/entities/muzzle_detection.dart';
+import 'package:boimetria/domain/exceptions/muzzle_detection_failure.dart';
 import 'package:boimetria/domain/value_objects/percentage.dart';
 import 'package:boimetria/domain/shared/result.dart';
 import 'package:flutter/foundation.dart';
@@ -16,25 +17,25 @@ class OnnxMuzzleDetectorService implements MuzzleDetectorService {
   final OrtSession _session;
 
   static Future<OnnxMuzzleDetectorService> load(String modelAsset) async {
-    final session = await OnnxRuntime().createSessionFromAsset(modelAsset);
-    return OnnxMuzzleDetectorService._(session);
+    try {
+      final session = await OnnxRuntime().createSessionFromAsset(modelAsset);
+      return OnnxMuzzleDetectorService._(session);
+    } on Exception catch (error) {
+      throw ModelLoadFailure(modelAsset, error);
+    }
   }
 
+  Future<void> close() => _session.close();
+
   @override
-  Future<Result<MuzzleDetection>> detect(Uint8List imageBytes) async {
+  Future<Result<MuzzleDetection?>> detect(Uint8List imageBytes) async {
     OrtValue? inputTensor;
     Map<String, OrtValue>? outputs;
 
     try {
       final decoded = img.decodeImage(imageBytes);
-      if (decoded == null) {
-        return Result.error(
-          Exception('Não foi possível decodificar a imagem.'),
-        );
-      }
+      if (decoded == null) return Result.error(const ImageDecodeFailure());
 
-      // Foto de celular quase sempre vem com os pixels deitados + tag EXIF de
-      // rotação; sem isso o YOLO recebe a imagem girada.
       final original = img.bakeOrientation(decoded);
 
       final letterbox = preprocess(original);
@@ -49,13 +50,10 @@ class OnnxMuzzleDetectorService implements MuzzleDetectorService {
 
       final rawOutput = await outputs[_session.outputNames.first]!.asList();
 
-      final prediction = postprocess(rawOutput, letterbox);
+      final boundingBox = postprocess(rawOutput, letterbox);
 
-      if (prediction == null) {
-        return Result.error(Exception('Nenhuma caixa valida na saida do modelo.'));
-      }
+      if (boundingBox == null) return Result.ok(null);
 
-      final boundingBox = prediction.box;
       final cropped = img.copyCrop(
         original,
         x: boundingBox.x.round(),
@@ -69,7 +67,6 @@ class OnnxMuzzleDetectorService implements MuzzleDetectorService {
           boundingBox: boundingBox,
           fullImage: imageBytes,
           croppedImage: img.encodeJpg(cropped),
-          confidence: Percentage(prediction.confidence),
         ),
       );
     } catch (e) {
@@ -97,9 +94,6 @@ class OnnxMuzzleDetectorService implements MuzzleDetectorService {
       original,
       width: resizedWidth,
       height: resizedHeight,
-      // O default do copyResize e' nearest, mas o Ultralytics usa
-      // cv2.INTER_LINEAR (LetterBox.interpolation) — nearest causa aliasing
-      // ao reduzir uma foto de celular para 640.
       interpolation: img.Interpolation.linear,
     );
 
@@ -127,7 +121,7 @@ class OnnxMuzzleDetectorService implements MuzzleDetectorService {
   }
 
   @visibleForTesting
-  static ({BoundingBox box, double confidence})? postprocess(
+  static BoundingBox? postprocess(
     List rawOutput,
     Letterbox letterbox,
   ) {
@@ -147,8 +141,6 @@ class OnnxMuzzleDetectorService implements MuzzleDetectorService {
     final maxX = letterbox.originalWidth.toDouble();
     final maxY = letterbox.originalHeight.toDouble();
 
-    // O YOLO prevê caixas que passam da borda quando a mufla está cortada no
-    // enquadramento; sem o clamp o recorte sai deslocado.
     final x1 = ((best[0] - letterbox.padX) / letterbox.scale).clamp(0.0, maxX);
     final y1 = ((best[1] - letterbox.padY) / letterbox.scale).clamp(0.0, maxY);
     final x2 = ((best[2] - letterbox.padX) / letterbox.scale).clamp(0.0, maxX);
@@ -156,9 +148,12 @@ class OnnxMuzzleDetectorService implements MuzzleDetectorService {
 
     if (x2 <= x1 || y2 <= y1) return null;
 
-    return (
-      box: BoundingBox(x: x1, y: y1, width: x2 - x1, height: y2 - y1),
-      confidence: best[4],
+    return BoundingBox(
+      x: x1,
+      y: y1,
+      width: x2 - x1,
+      height: y2 - y1,
+      confidence: Percentage(best[4]),
     );
   }
 }

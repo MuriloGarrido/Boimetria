@@ -8,12 +8,15 @@ class BoundingBox {
     required this.y,
     required this.width,
     required this.height,
+    required this.confidence,
   });
 
   final double x;
   final double y;
   final double width;
   final double height;
+
+  final Percentage confidence;
 }
 
 class MuzzleDetection {
@@ -21,12 +24,11 @@ class MuzzleDetection {
     required this.boundingBox,
     required this.fullImage,
     required this.croppedImage,
-    required this.confidence,
   });
 
   final BoundingBox boundingBox;
   final Uint8List fullImage;
   final Uint8List croppedImage;
 
-  final Percentage confidence;
+  Percentage get confidence => boundingBox.confidence;
 }

@@ -129,6 +129,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get muzzleRetakeAction => 'RETAKE PHOTO';
 
   @override
+  String get muzzleAbsentTitle => 'NO MUZZLE FOUND';
+
+  @override
+  String get muzzleAbsentDescription =>
+      'Point the camera at the animal\'s muzzle';
+
+  @override
+  String get muzzleAbsentAction => 'TAKE ANOTHER PHOTO';
+
+  @override
   String get muzzleFailedTitle => 'COULD NOT READ IT';
 
   @override

@@ -34,29 +34,32 @@ class RegisterAnimalViewModel extends Notifier<RegisterAnimalState> {
 
     state = state.copyWith(muzzle: const MuzzleDetecting());
 
-    final Result<MuzzleDetection> result;
+    final Result<MuzzleDetection?> result;
     try {
       final detector = await ref.read(muzzleDetectorProvider.future);
       result = await detector.detect(bytes);
-    } on Exception {
-      if (ref.mounted) state = state.copyWith(muzzle: _failed);
+    } on Exception catch (error) {
+      if (ref.mounted) {
+        state = state.copyWith(muzzle: MuzzleFailed(error.toString()));
+      }
       return;
     }
 
     if (!ref.mounted) return;
 
-    state = state.copyWith(muzzle: _muzzleFrom(result));
+    const floor = DetectionPolicy.minimumScore;
+    const minimum = EnrollmentPolicy.minimumConfidence;
+
+    state = state.copyWith(
+      muzzle: switch (result) {
+        Error(:final error) => MuzzleFailed(error.toString()),
+        Ok(value: null) => MuzzleAbsent(bytes),
+        Ok(value: final detection?) when detection.confidence < floor =>
+          MuzzleAbsent(bytes),
+        Ok(value: final detection?) when detection.confidence < minimum =>
+          MuzzleLowConfidence(detection, minimum),
+        Ok(value: final detection?) => MuzzleCaptured(detection),
+      },
+    );
   }
-
-  MuzzleState _muzzleFrom(Result<MuzzleDetection> result) => switch (result) {
-    Error() => _failed,
-    Ok(:final value) when value.confidence < DetectionPolicy.minimumScore =>
-      const MuzzleFailed("Não achei um focinho. Aponte a câmera no focinho."),
-    Ok(:final value) when value.confidence < EnrollmentPolicy.minimumConfidence
-        =>
-      MuzzleLowConfidence(value, EnrollmentPolicy.minimumConfidence),
-    Ok(:final value) => MuzzleCaptured(value),
-  };
-
-  static const _failed = MuzzleFailed("A leitura falhou. Tente de novo.");
 }

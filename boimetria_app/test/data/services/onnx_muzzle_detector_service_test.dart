@@ -187,19 +187,20 @@ void main() {
 
       // x: (200 - 160) / 0.64 = 62.5   |  y: (100 - 0) / 0.64 = 156.25
       expect(prediction, isNotNull);
-      expect(prediction!.box.x, closeTo(62.5, 1e-9));
-      expect(prediction.box.y, closeTo(156.25, 1e-9));
-      expect(prediction.box.width, closeTo(156.25, 1e-9));
-      expect(prediction.box.height, closeTo(156.25, 1e-9));
+      expect(prediction!.x, closeTo(62.5, 1e-9));
+      expect(prediction.y, closeTo(156.25, 1e-9));
+      expect(prediction.width, closeTo(156.25, 1e-9));
+      expect(prediction.height, closeTo(156.25, 1e-9));
     });
 
-    test('ignora detecção abaixo do limiar de confiança', () {
+    test('devolve a caixa mesmo com score baixo: quem filtra é a policy', () {
       final prediction = OnnxMuzzleDetectorService.postprocess(
-        _output([_detection(200, 100, 300, 200, 0.49)]),
+        _output([_detection(200, 100, 300, 200, 0.05)]),
         _portraitLetterbox(),
       );
 
-      expect(prediction, isNull);
+      expect(prediction, isNotNull);
+      expect(prediction!.confidence.value, closeTo(0.05, 1e-9));
     });
 
     test('devolve null quando não há detecção nenhuma', () {
@@ -223,7 +224,7 @@ void main() {
 
       // A de score 0.95 começa em x = (360 - 160) / 0.64 = 312.5
       expect(prediction, isNotNull);
-      expect(prediction!.box.x, closeTo(312.5, 1e-9));
+      expect(prediction!.x, closeTo(312.5, 1e-9));
     });
 
     test('clampa a caixa que passa da borda da imagem', () {
@@ -234,9 +235,9 @@ void main() {
       );
 
       expect(prediction, isNotNull);
-      expect(prediction!.box.x, 0.0);
-      expect(prediction.box.y, 0.0);
-      expect(prediction.box.width, closeTo(218.75, 1e-9));
+      expect(prediction!.x, 0.0);
+      expect(prediction.y, 0.0);
+      expect(prediction.width, closeTo(218.75, 1e-9));
     });
 
     test('devolve null quando a caixa fica inteiramente fora da imagem', () {
@@ -250,13 +251,13 @@ void main() {
       expect(prediction, isNull);
     });
 
-    test('aceita score exatamente no limiar', () {
+    test('devolve null quando a saída vem toda zerada', () {
       final prediction = OnnxMuzzleDetectorService.postprocess(
-        _output([_detection(200, 100, 300, 200, 0.5)]),
+        _output([_detection(0, 0, 0, 0, 0)]),
         _portraitLetterbox(),
       );
 
-      expect(prediction, isNotNull);
+      expect(prediction, isNull);
     });
   });
 }

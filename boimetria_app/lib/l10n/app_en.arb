@@ -56,6 +56,9 @@
     }
   },
   "muzzleRetakeAction": "RETAKE PHOTO",
+  "muzzleAbsentTitle": "NO MUZZLE FOUND",
+  "muzzleAbsentDescription": "Point the camera at the animal's muzzle",
+  "muzzleAbsentAction": "TAKE ANOTHER PHOTO",
   "muzzleFailedTitle": "COULD NOT READ IT",
   "muzzleRetryAction": "TRY AGAIN",
 
