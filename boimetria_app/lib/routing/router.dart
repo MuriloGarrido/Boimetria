@@ -5,7 +5,7 @@ import 'dart:typed_data';
 
 import '../ui/home/widgets/home_screen.dart';
 import '../ui/identify/identify_result_screen.dart';
-import '../ui/register/widgets/register_animal_screen.dart';
+import '../ui/register/widgets/register_bovine_screen.dart';
 
 /// Tabela central de rotas do app. Cada [GoRoute] mapeia um caminho para
 /// a tela correspondente; argumentos complexos chegam via `state.extra`.
@@ -22,7 +22,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/register',
-        builder: (context, state) => const RegisterAnimalScreen(),
+        builder: (context, state) => const RegisterBovineScreen(),
       ),
     ],
   );

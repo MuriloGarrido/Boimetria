@@ -1,23 +1,23 @@
 import 'dart:typed_data';
 
 import 'package:boimetria/config/dependencies.dart';
-import 'package:boimetria/domain/entities/animal.dart';
-import 'package:boimetria/domain/entities/muzzle_detection.dart';
+import 'package:boimetria/domain/entities/bovine.dart';
+import 'package:boimetria/domain/value_objects/muzzle_detection.dart';
 import 'package:boimetria/domain/policies/detection_policy.dart';
 import 'package:boimetria/domain/policies/enrollment_policy.dart';
 import 'package:boimetria/domain/shared/result.dart';
 import 'package:boimetria/ui/register/view_models/muzzle_state.dart';
-import 'package:boimetria/ui/register/view_models/register_animal_state.dart';
+import 'package:boimetria/ui/register/view_models/register_bovine_state.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final registerAnimalProvider =
-    NotifierProvider.autoDispose<RegisterAnimalViewModel, RegisterAnimalState>(
-      RegisterAnimalViewModel.new,
+final registerBovineProvider =
+    NotifierProvider.autoDispose<RegisterBovineViewModel, RegisterBovineState>(
+      RegisterBovineViewModel.new,
     );
 
-class RegisterAnimalViewModel extends Notifier<RegisterAnimalState> {
+class RegisterBovineViewModel extends Notifier<RegisterBovineState> {
   @override
-  RegisterAnimalState build() => RegisterAnimalState(entryDate: DateTime.now());
+  RegisterBovineState build() => RegisterBovineState(entryDate: DateTime.now());
 
   void setTag(String value) => state = state.copyWith(tag: value);
 

@@ -1,7 +1,8 @@
 import 'dart:math' as math;
 
 import 'package:boimetria/domain/interfaces/services/muzzle_detector.dart';
-import 'package:boimetria/domain/entities/muzzle_detection.dart';
+import 'package:boimetria/domain/value_objects/bounding_box.dart';
+import 'package:boimetria/domain/value_objects/muzzle_detection.dart';
 import 'package:boimetria/domain/exceptions/muzzle_detection_failure.dart';
 import 'package:boimetria/domain/value_objects/percentage.dart';
 import 'package:boimetria/domain/shared/result.dart';

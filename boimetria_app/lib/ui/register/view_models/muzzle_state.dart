@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-import 'package:boimetria/domain/entities/muzzle_detection.dart';
+import 'package:boimetria/domain/value_objects/muzzle_detection.dart';
 import 'package:boimetria/domain/value_objects/percentage.dart';
 
 sealed class MuzzleState {

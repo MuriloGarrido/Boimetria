@@ -44,7 +44,10 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   intl: any
-  freezed_annotation: ^2.4.4
+  freezed_annotation: ^3.1.0
+  drift: ^2.31.0
+  drift_flutter: ^0.3.1
+  sqlite3: ^3.5.2
 
 dev_dependencies:
   flutter_test:
@@ -58,7 +61,8 @@ dev_dependencies:
   flutter_lints: ^5.0.0
   flutter_native_splash: ^2.4.7
   build_runner: ^2.5.4
-  freezed: ^2.5.7
+  freezed: ^4.0.1
+  drift_dev: ^2.34.6
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

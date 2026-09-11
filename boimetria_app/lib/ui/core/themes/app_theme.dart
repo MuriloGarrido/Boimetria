@@ -22,7 +22,7 @@ abstract class AppTheme {
       surfaceContainerHighest: AppColors.background,
     ),
     scaffoldBackgroundColor: AppColors.background,
-    appBarTheme: const AppBarTheme(color: AppColors.appbar),
+    appBarTheme: const AppBarTheme(backgroundColor: AppColors.appbar),
     fontFamily: 'Archivo',
     textTheme: const TextTheme(
       displayLarge: TextStyle(

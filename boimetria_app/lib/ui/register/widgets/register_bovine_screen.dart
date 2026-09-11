@@ -1,4 +1,4 @@
-import 'package:boimetria/domain/entities/animal.dart';
+import 'package:boimetria/domain/entities/bovine.dart';
 import 'package:boimetria/ui/core/formatters/decimal_input_formatter.dart';
 import 'package:boimetria/ui/core/widgets/app_button.dart';
 import 'package:boimetria/ui/core/widgets/app_header.dart';
@@ -6,22 +6,22 @@ import 'package:boimetria/ui/core/widgets/choice_field.dart';
 import 'package:boimetria/ui/core/widgets/date_field.dart';
 import 'package:boimetria/ui/core/widgets/image_source_sheet.dart';
 import 'package:boimetria/ui/core/widgets/input_field.dart';
-import 'package:boimetria/ui/register/view_models/register_animal_view_model.dart';
+import 'package:boimetria/ui/register/view_models/register_bovine_view_model.dart';
 import 'package:boimetria/ui/register/widgets/muzzle_card.dart';
 import 'package:boimetria/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 
-class RegisterAnimalScreen extends ConsumerWidget {
-  const RegisterAnimalScreen({super.key});
+class RegisterBovineScreen extends ConsumerWidget {
+  const RegisterBovineScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final text = Theme.of(context).textTheme;
     final l10n = AppLocalizations.of(context);
-    final state = ref.watch(registerAnimalProvider);
-    final vm = ref.read(registerAnimalProvider.notifier);
+    final state = ref.watch(registerBovineProvider);
+    final vm = ref.read(registerBovineProvider.notifier);
 
     return Scaffold(
       appBar: const AppHeader(),
@@ -104,7 +104,7 @@ class RegisterAnimalScreen extends ConsumerWidget {
 
   Future<void> _onRead(
     BuildContext context,
-    RegisterAnimalViewModel vm,
+    RegisterBovineViewModel vm,
   ) async {
     final source = await ImageSourceSheet.show(context);
     if (source == null) return;

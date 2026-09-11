@@ -1,16 +1,16 @@
-import 'package:boimetria/domain/entities/animal.dart';
+import 'package:boimetria/domain/entities/bovine.dart';
 import 'package:boimetria/domain/value_objects/weight.dart';
 import 'package:boimetria/utils/decimals.dart';
 import 'package:boimetria/ui/register/view_models/muzzle_state.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-part 'register_animal_state.freezed.dart';
+part 'register_bovine_state.freezed.dart';
 
 @freezed
-class RegisterAnimalState with _$RegisterAnimalState {
-  const RegisterAnimalState._();
+abstract class RegisterBovineState with _$RegisterBovineState {
+  const RegisterBovineState._();
 
-  const factory RegisterAnimalState({
+  const factory RegisterBovineState({
     @Default(MuzzleMissing()) MuzzleState muzzle,
     required DateTime entryDate,
     String? tag,
@@ -18,7 +18,7 @@ class RegisterAnimalState with _$RegisterAnimalState {
     DateTime? birthDate,
     String? weightText,
     @Default(false) bool saving,
-  }) = _RegisterAnimalState;
+  }) = _RegisterBovineState;
 
   Weight? get weight {
     final kg = Decimals.tryParse(weightText ?? '');

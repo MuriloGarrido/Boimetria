@@ -9,14 +9,18 @@ import 'package:image/image.dart' as img;
 const _inputSize = 128;
 
 class OnnxMuzzleEmbedderService implements MuzzleEmbedderService {
-  OnnxMuzzleEmbedderService._(this._session);
+  OnnxMuzzleEmbedderService._(this._session, this._modelVersion);
 
   final OrtSession _session;
+  final String _modelVersion;
 
-  static Future<OnnxMuzzleEmbedderService> load(String modelAsset) async {
+  static Future<OnnxMuzzleEmbedderService> load(
+    String modelAsset,
+    String modelVersion,
+  ) async {
     try {
       final session = await OnnxRuntime().createSessionFromAsset(modelAsset);
-      return OnnxMuzzleEmbedderService._(session);
+      return OnnxMuzzleEmbedderService._(session, modelVersion);
     } on Exception catch (error) {
       throw ModelLoadFailure(modelAsset, error);
     }
@@ -44,7 +48,7 @@ class OnnxMuzzleEmbedderService implements MuzzleEmbedderService {
 
       final rawOutput = await outputs[_session.outputNames.first]!.asList();
 
-      return Result.ok(MuzzleEmbedding(postprocess(rawOutput)));
+      return Result.ok(MuzzleEmbedding(postprocess(rawOutput), _modelVersion));
     } on Exception catch (error) {
       return Result.error(error);
     } finally {

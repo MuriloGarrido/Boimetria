@@ -1,3 +1,4 @@
+import 'package:boimetria/config/dependencies.dart';
 import 'package:boimetria/l10n/app_locale.dart';
 import 'package:boimetria/l10n/generated/app_localizations.dart';
 import 'package:boimetria/ui/core/state/locale_controller.dart';
@@ -8,7 +9,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 void main() {
-  runApp(const ProviderScope(child: MyApp()));
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final container = ProviderContainer();
+  container.read(muzzleDetectorProvider);
+  container.read(muzzleEmbedderProvider);
+
+  runApp(
+    UncontrolledProviderScope(container: container, child: const MyApp()),
+  );
 }
 
 class MyApp extends ConsumerWidget {

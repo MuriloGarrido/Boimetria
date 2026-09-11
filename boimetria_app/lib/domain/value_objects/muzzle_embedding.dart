@@ -4,18 +4,29 @@ import 'dart:typed_data';
 import 'package:boimetria/domain/value_objects/distance.dart';
 
 class MuzzleEmbedding {
-  
+  MuzzleEmbedding(Float32List values, this.modelVersion)
+    : values = _unit(values);
+
+  factory MuzzleEmbedding.fromBytes(Uint8List bytes, String modelVersion) =>
+      MuzzleEmbedding(
+        Float32List.sublistView(Uint8List.fromList(bytes)),
+        modelVersion,
+      );
+
   final Float32List values;
+  final String modelVersion;
+
   int get length => values.length;
-  
-  MuzzleEmbedding(Float32List values) : values = _unit(values);
-
-  factory MuzzleEmbedding.fromBytes(Uint8List bytes) =>
-      MuzzleEmbedding(Float32List.sublistView(Uint8List.fromList(bytes)));
-
-
 
   Distance distanceTo(MuzzleEmbedding other) {
+    if (modelVersion != other.modelVersion) {
+      throw ArgumentError.value(
+        other.modelVersion,
+        'other',
+        'embedding from a different model than $modelVersion',
+      );
+    }
+
     var sum = 0.0;
     for (var i = 0; i < values.length; i++) {
       final difference = values[i] - other.values[i];
