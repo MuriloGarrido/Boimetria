@@ -1,0 +1,23 @@
+# Python 3.12.10 | CUDA 12.4
+#   pip install -r requirements.txt --extra-index-url https://download.pytorch.org/whl/cu124
+#
+
+# ----------------------------------------------------------------- treino
+torch==2.6.0+cu124
+torchvision==0.21.0+cu124
+timm==1.0.28                # backbone MobileViT-S
+numpy==2.4.4
+pillow==12.2.0              # ImageFolder carrega as imagens via PIL
+scikit-learn==1.9.0         # accuracy/precision/recall/F1
+
+# ----------------------------------------------------------------- export
+onnx==1.22.0
+onnxscript==0.7.1
+onnxruntime==1.28.0         # verificacao do .onnx exportado
+
+# ------------------------------------------------ ferramentas (opcional)
+# Nao sao importadas por nenhum script; ficam por conveniencia.
+matplotlib==3.11.1          # curvas para a monografia
+tqdm==4.70.0
+torchinfo==1.8.0            # sumario da arquitetura
+netron==9.2.0               # visualizador do .onnx

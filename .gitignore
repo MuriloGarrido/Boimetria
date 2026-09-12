@@ -1,4 +1,3 @@
-# Research workspaces: datasets, venvs, checkpoints and model exports.
-# Kept out of the repo for size; the app loads the models from assets/.
-/cattlemuzzlenet/*
+# Research workspaces. cattlemuzzlenet/ has its own .gitignore (source is
+# tracked, datasets and weights are not); yolo/ is still fully excluded.
 /yolo/*

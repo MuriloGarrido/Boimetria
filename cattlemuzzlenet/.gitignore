@@ -1,0 +1,19 @@
+# ---------------------------------------------------------------- datasets
+# Arvores de imagens: grandes demais para o repo. A divisao NAO vive aqui -
+# vive em splits/*.json, que sao versionados.
+/datasets/
+
+# ------------------------------------------------------------------- pesos
+# Checkpoints e exports. O app carrega o modelo de boimetria_app/assets/models/.
+/runs/
+*.pth
+*.onnx
+
+# ----------------------------------------------------------------- ambiente
+/venv/
+__pycache__/
+*.py[cod]
+.claude/settings.local.json
+
+# splits/*.json e eval_results/*.json SAO versionados de proposito: definem o
+# protocolo de avaliacao e guardam os numeros que vao para a monografia.
