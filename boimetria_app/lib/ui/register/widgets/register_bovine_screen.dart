@@ -11,6 +11,7 @@ import 'package:boimetria/ui/register/widgets/muzzle_card.dart';
 import 'package:boimetria/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
 class RegisterBovineScreen extends ConsumerWidget {
@@ -30,7 +31,9 @@ class RegisterBovineScreen extends ConsumerWidget {
           padding: const EdgeInsets.fromLTRB(20, 0, 20, 10),
           child: AppButton.filled(
             label: l10n.registerSave,
-            onPressed: state.canSave ? () {} : null,
+            onPressed: state.canSave
+                ? () => _onSave(context, ref, l10n)
+                : null,
           ),
         ),
       ),
@@ -100,6 +103,24 @@ class RegisterBovineScreen extends ConsumerWidget {
         ),
       ),
     );
+  }
+
+  Future<void> _onSave(
+    BuildContext context,
+    WidgetRef ref,
+    AppLocalizations l10n,
+  ) async {
+    final messenger = ScaffoldMessenger.of(context);
+
+    try {
+      await ref.read(registerBovineProvider.notifier).save();
+    } on Exception {
+      messenger.showSnackBar(SnackBar(content: Text(l10n.registerSaveFailed)));
+      return;
+    }
+
+    messenger.showSnackBar(SnackBar(content: Text(l10n.registerSaved)));
+    if (context.mounted) context.go('/');
   }
 
   Future<void> _onRead(

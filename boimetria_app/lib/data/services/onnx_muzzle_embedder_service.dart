@@ -1,6 +1,5 @@
 import 'package:boimetria/domain/exceptions/muzzle_detection_failure.dart';
 import 'package:boimetria/domain/interfaces/services/muzzle_embedder.dart';
-import 'package:boimetria/domain/shared/result.dart';
 import 'package:boimetria/domain/value_objects/muzzle_embedding.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_onnxruntime/flutter_onnxruntime.dart';
@@ -29,13 +28,13 @@ class OnnxMuzzleEmbedderService implements MuzzleEmbedderService {
   Future<void> close() => _session.close();
 
   @override
-  Future<Result<MuzzleEmbedding>> embed(Uint8List muzzleImage) async {
+  Future<MuzzleEmbedding> embed(Uint8List muzzleImage) async {
     OrtValue? inputTensor;
     Map<String, OrtValue>? outputs;
 
     try {
       final decoded = img.decodeImage(muzzleImage);
-      if (decoded == null) return Result.error(const ImageDecodeFailure());
+      if (decoded == null) throw const ImageDecodeFailure();
 
       inputTensor = await OrtValue.fromList(preprocess(decoded), [
         1,
@@ -48,9 +47,7 @@ class OnnxMuzzleEmbedderService implements MuzzleEmbedderService {
 
       final rawOutput = await outputs[_session.outputNames.first]!.asList();
 
-      return Result.ok(MuzzleEmbedding(postprocess(rawOutput), _modelVersion));
-    } on Exception catch (error) {
-      return Result.error(error);
+      return MuzzleEmbedding(postprocess(rawOutput), _modelVersion);
     } finally {
       await inputTensor?.dispose();
       for (final output in outputs?.values ?? const <OrtValue>[]) {

@@ -3,7 +3,6 @@ import 'dart:typed_data';
 
 import 'package:boimetria/data/database/app_database.dart';
 import 'package:boimetria/data/repositories/local_muzzle_template_repository.dart';
-import 'package:boimetria/domain/shared/result.dart';
 import 'package:boimetria/domain/value_objects/muzzle_embedding.dart';
 import 'package:boimetria/domain/value_objects/muzzle_template_draft.dart';
 import 'package:drift/native.dart';
@@ -13,17 +12,24 @@ final _vecLibrary = Platform.environment['SQLITE_VEC_PATH'];
 
 const _model = 'cattlemuzzlenet-2026-08-07';
 
-T _unwrap<T>(Result<T> result) => switch (result) {
-  Ok<T>(:final value) => value,
-  Error<T>(:final error) => throw error,
-};
-
 MuzzleEmbedding _embedding(int hot, {double bleed = 0.0}) {
   final values = Float32List(muzzleEmbeddingDimensions);
   values[hot] = 1.0;
   if (bleed > 0) values[(hot + 1) % muzzleEmbeddingDimensions] = bleed;
   return MuzzleEmbedding(values, _model);
 }
+
+MuzzleTemplateDraft _draft(
+  int bovineId,
+  MuzzleEmbedding embedding,
+  DateTime capturedAt, {
+  String? cropPath,
+}) => MuzzleTemplateDraft(
+  bovineId: bovineId,
+  embedding: embedding,
+  capturedAt: capturedAt,
+  cropPath: cropPath,
+);
 
 void main() {
   if (_vecLibrary == null) {
@@ -62,23 +68,11 @@ void main() {
   });
 
   test('enroll assigns an autoincrement id', () async {
-    final first = _unwrap(
-      await repository.enroll(
-        MuzzleTemplateDraft(
-          bovineId: 1,
-          embedding: _embedding(0),
-          capturedAt: DateTime(2026, 1, 1),
-        ),
-      ),
+    final first = await repository.enroll(
+      _draft(1, _embedding(0), DateTime(2026, 1, 1)),
     );
-    final second = _unwrap(
-      await repository.enroll(
-        MuzzleTemplateDraft(
-          bovineId: 1,
-          embedding: _embedding(1),
-          capturedAt: DateTime(2026, 1, 2),
-        ),
-      ),
+    final second = await repository.enroll(
+      _draft(1, _embedding(1), DateTime(2026, 1, 2)),
     );
 
     expect(first.id, isPositive);
@@ -86,17 +80,13 @@ void main() {
   });
 
   test('nearest ranks by distance', () async {
-    for (final (bovineId, hot, bleed) in [(1, 0, 0.0), (2, 0, 0.5), (3, 300, 0.0)]) {
-      await repository.enroll(
-        MuzzleTemplateDraft(
-          bovineId: bovineId,
-          embedding: _embedding(hot, bleed: bleed),
-          capturedAt: DateTime(2026, 1, 1),
-        ),
-      );
-    }
+    await repository.enroll(_draft(1, _embedding(0), DateTime(2026, 1, 1)));
+    await repository.enroll(
+      _draft(2, _embedding(0, bleed: 0.5), DateTime(2026, 1, 1)),
+    );
+    await repository.enroll(_draft(3, _embedding(300), DateTime(2026, 1, 1)));
 
-    final matches = _unwrap(await repository.nearest(_embedding(0), k: 3));
+    final matches = await repository.nearest(_embedding(0), k: 3);
 
     expect(matches.map((m) => m.template.bovineId), [1, 2, 3]);
     expect(matches.first.distance.value, closeTo(0.0, 1e-5));
@@ -106,44 +96,28 @@ void main() {
 
   test('nearest filters by model version', () async {
     await repository.enroll(
-      MuzzleTemplateDraft(
-        bovineId: 1,
-        embedding: MuzzleEmbedding(_embedding(0).values, 'old-model'),
-        capturedAt: DateTime(2026, 1, 1),
+      _draft(
+        1,
+        MuzzleEmbedding(_embedding(0).values, 'old-model'),
+        DateTime(2026, 1, 1),
       ),
     );
-    await repository.enroll(
-      MuzzleTemplateDraft(
-        bovineId: 2,
-        embedding: _embedding(5),
-        capturedAt: DateTime(2026, 1, 1),
-      ),
-    );
+    await repository.enroll(_draft(2, _embedding(5), DateTime(2026, 1, 1)));
 
-    final matches = _unwrap(await repository.nearest(_embedding(0), k: 10));
+    final matches = await repository.nearest(_embedding(0), k: 10);
 
     expect(matches.map((m) => m.template.bovineId), [2]);
   });
 
   test('currentFor returns the latest matching template', () async {
     await repository.enroll(
-      MuzzleTemplateDraft(
-        bovineId: 7,
-        embedding: _embedding(1),
-        capturedAt: DateTime(2026, 1, 1),
-        cropPath: 'old.jpg',
-      ),
+      _draft(7, _embedding(1), DateTime(2026, 1, 1), cropPath: 'old.jpg'),
     );
     await repository.enroll(
-      MuzzleTemplateDraft(
-        bovineId: 7,
-        embedding: _embedding(2),
-        capturedAt: DateTime(2026, 6, 1),
-        cropPath: 'new.jpg',
-      ),
+      _draft(7, _embedding(2), DateTime(2026, 6, 1), cropPath: 'new.jpg'),
     );
 
-    final current = _unwrap(await repository.currentFor(7));
+    final current = await repository.currentFor(7);
 
     expect(current, isNotNull);
     expect(current!.cropPath, 'new.jpg');
@@ -152,22 +126,16 @@ void main() {
   });
 
   test('currentFor returns null for an unknown bovine', () async {
-    expect(_unwrap(await repository.currentFor(999)), isNull);
+    expect(await repository.currentFor(999), isNull);
   });
 
   test('remove deletes the template', () async {
-    final template = _unwrap(
-      await repository.enroll(
-        MuzzleTemplateDraft(
-          bovineId: 4,
-          embedding: _embedding(7),
-          capturedAt: DateTime(2026, 1, 1),
-        ),
-      ),
+    final template = await repository.enroll(
+      _draft(4, _embedding(7), DateTime(2026, 1, 1)),
     );
 
-    _unwrap(await repository.remove(template.id));
+    await repository.remove(template.id);
 
-    expect(_unwrap(await repository.currentFor(4)), isNull);
+    expect(await repository.currentFor(4), isNull);
   });
 }

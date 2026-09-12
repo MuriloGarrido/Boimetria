@@ -148,4 +148,34 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get dateFieldToday => 'Hoje';
+
+  @override
+  String get registerSaved => 'Animal cadastrado';
+
+  @override
+  String get registerSaveFailed => 'Não deu pra salvar. Tente de novo';
+
+  @override
+  String get identifyMatchedTitle => 'ANIMAL ENCONTRADO';
+
+  @override
+  String get identifyUnknownTitle => 'NÃO RECONHECI';
+
+  @override
+  String get identifyNoMuzzleTitle => 'NÃO ACHEI O FOCINHO';
+
+  @override
+  String get identifyFailedTitle => 'NÃO DEU PRA LER';
+
+  @override
+  String get identifyDetectionLabel => 'DETECÇÃO';
+
+  @override
+  String get identifySimilarityLabel => 'SEMELHANÇA';
+
+  @override
+  String get identifyAnimalLabel => 'IDENTIFICADOR';
+
+  @override
+  String get identifyNoneEnrolled => 'Nenhum animal cadastrado ainda';
 }

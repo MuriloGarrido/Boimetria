@@ -1,7 +1,6 @@
 import 'package:boimetria/data/database/app_database.dart';
 import 'package:boimetria/domain/entities/muzzle_template.dart';
 import 'package:boimetria/domain/interfaces/repositories/muzzle_template_repository.dart';
-import 'package:boimetria/domain/shared/result.dart';
 import 'package:boimetria/domain/value_objects/distance.dart';
 import 'package:boimetria/domain/value_objects/muzzle_embedding.dart';
 import 'package:boimetria/domain/value_objects/muzzle_match.dart';
@@ -15,102 +14,80 @@ class LocalMuzzleTemplateRepository implements MuzzleTemplateRepository {
   final String _modelVersion;
 
   @override
-  Future<Result<MuzzleTemplate>> enroll(MuzzleTemplateDraft draft) async {
-    try {
-      final id = await _database.customInsert(
-        'INSERT INTO muzzle_templates'
-        '(embedding, bovine_id, model_version, captured_at, crop_path) '
-        'VALUES (?, ?, ?, ?, ?)',
-        variables: [
-          Variable<Uint8List>(draft.embedding.toBytes()),
-          Variable<int>(draft.bovineId),
-          Variable<String>(draft.embedding.modelVersion),
-          Variable<int>(draft.capturedAt.millisecondsSinceEpoch),
-          Variable<String>(draft.cropPath),
-        ],
-      );
+  Future<MuzzleTemplate> enroll(MuzzleTemplateDraft draft) async {
+    final id = await _database.customInsert(
+      'INSERT INTO muzzle_templates'
+      '(embedding, bovine_id, model_version, captured_at, crop_path) '
+      'VALUES (?, ?, ?, ?, ?)',
+      variables: [
+        Variable<Uint8List>(draft.embedding.toBytes()),
+        Variable<int>(draft.bovineId),
+        Variable<String>(draft.embedding.modelVersion),
+        Variable<int>(draft.capturedAt.millisecondsSinceEpoch),
+        Variable<String>(draft.cropPath),
+      ],
+    );
 
-      return Result.ok(
-        MuzzleTemplate(
-          id: id,
-          bovineId: draft.bovineId,
-          modelVersion: draft.embedding.modelVersion,
-          capturedAt: draft.capturedAt,
-          cropPath: draft.cropPath,
-        ),
-      );
-    } on Exception catch (error) {
-      return Result.error(error);
-    }
+    return MuzzleTemplate(
+      id: id,
+      bovineId: draft.bovineId,
+      modelVersion: draft.embedding.modelVersion,
+      capturedAt: draft.capturedAt,
+      cropPath: draft.cropPath,
+    );
   }
 
   @override
-  Future<Result<void>> remove(int id) async {
-    try {
-      await _database.customStatement(
-        'DELETE FROM muzzle_templates WHERE id = ?',
-        [id],
-      );
+  Future<void> remove(int id) => _database.customStatement(
+    'DELETE FROM muzzle_templates WHERE id = ?',
+    [id],
+  );
 
-      return Result.ok(null);
-    } on Exception catch (error) {
-      return Result.error(error);
-    }
+  @override
+  Future<MuzzleTemplate?> currentFor(int bovineId) async {
+    final rows = await _database
+        .customSelect(
+          'SELECT id, bovine_id, model_version, captured_at, crop_path '
+          'FROM muzzle_templates '
+          'WHERE bovine_id = ? AND model_version = ? '
+          'ORDER BY captured_at DESC, id DESC '
+          'LIMIT 1',
+          variables: [
+            Variable<int>(bovineId),
+            Variable<String>(_modelVersion),
+          ],
+        )
+        .get();
+
+    return rows.isEmpty ? null : _toDomain(rows.first);
   }
 
   @override
-  Future<Result<MuzzleTemplate?>> currentFor(int bovineId) async {
-    try {
-      final rows = await _database
-          .customSelect(
-            'SELECT id, bovine_id, model_version, captured_at, crop_path '
-            'FROM muzzle_templates '
-            'WHERE bovine_id = ? AND model_version = ? '
-            'ORDER BY captured_at DESC, id DESC '
-            'LIMIT 1',
-            variables: [
-              Variable<int>(bovineId),
-              Variable<String>(_modelVersion),
-            ],
-          )
-          .get();
-
-      return Result.ok(rows.isEmpty ? null : _toDomain(rows.first));
-    } on Exception catch (error) {
-      return Result.error(error);
-    }
-  }
-
-  @override
-  Future<Result<List<MuzzleMatch>>> nearest(
+  Future<List<MuzzleMatch>> nearest(
     MuzzleEmbedding probe, {
     required int k,
   }) async {
-    try {
-      final rows = await _database
-          .customSelect(
-            'SELECT id, bovine_id, model_version, captured_at, crop_path, '
-            'distance FROM muzzle_templates '
-            'WHERE embedding MATCH ? AND k = ? AND model_version = ? '
-            'ORDER BY distance',
-            variables: [
-              Variable<Uint8List>(probe.toBytes()),
-              Variable<int>(k),
-              Variable<String>(probe.modelVersion),
-            ],
-          )
-          .get();
+    final rows = await _database
+        .customSelect(
+          'SELECT id, bovine_id, model_version, captured_at, crop_path, '
+          'distance FROM muzzle_templates '
+          'WHERE embedding MATCH ? AND k = ? AND model_version = ? '
+          'ORDER BY distance',
+          variables: [
+            Variable<Uint8List>(probe.toBytes()),
+            Variable<int>(k),
+            Variable<String>(probe.modelVersion),
+          ],
+        )
+        .get();
 
-      return Result.ok([
-        for (final row in rows)
-          MuzzleMatch(
-            template: _toDomain(row),
-            distance: Distance(row.read<double>('distance')),
-          ),
-      ]);
-    } on Exception catch (error) {
-      return Result.error(error);
-    }
+    return [
+      for (final row in rows)
+        MuzzleMatch(
+          template: _toDomain(row),
+          distance: Distance(row.read<double>('distance')),
+        ),
+    ];
   }
 
   MuzzleTemplate _toDomain(QueryRow row) => MuzzleTemplate(

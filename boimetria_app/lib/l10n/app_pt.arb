@@ -69,5 +69,17 @@
   "muzzleRetryAction": "TENTAR DE NOVO",
 
   "dateFieldPlaceholder": "dd/mm/aaaa",
-  "dateFieldToday": "Hoje"
+  "dateFieldToday": "Hoje",
+
+  "registerSaved": "Animal cadastrado",
+  "registerSaveFailed": "Não deu pra salvar. Tente de novo",
+
+  "identifyMatchedTitle": "ANIMAL ENCONTRADO",
+  "identifyUnknownTitle": "NÃO RECONHECI",
+  "identifyNoMuzzleTitle": "NÃO ACHEI O FOCINHO",
+  "identifyFailedTitle": "NÃO DEU PRA LER",
+  "identifyDetectionLabel": "DETECÇÃO",
+  "identifySimilarityLabel": "SEMELHANÇA",
+  "identifyAnimalLabel": "IDENTIFICADOR",
+  "identifyNoneEnrolled": "Nenhum animal cadastrado ainda"
 }

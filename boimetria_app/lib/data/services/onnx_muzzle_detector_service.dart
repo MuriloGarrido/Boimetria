@@ -5,7 +5,6 @@ import 'package:boimetria/domain/value_objects/bounding_box.dart';
 import 'package:boimetria/domain/value_objects/muzzle_detection.dart';
 import 'package:boimetria/domain/exceptions/muzzle_detection_failure.dart';
 import 'package:boimetria/domain/value_objects/percentage.dart';
-import 'package:boimetria/domain/shared/result.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_onnxruntime/flutter_onnxruntime.dart';
 import 'package:image/image.dart' as img;
@@ -29,13 +28,13 @@ class OnnxMuzzleDetectorService implements MuzzleDetectorService {
   Future<void> close() => _session.close();
 
   @override
-  Future<Result<MuzzleDetection?>> detect(Uint8List imageBytes) async {
+  Future<MuzzleDetection?> detect(Uint8List imageBytes) async {
     OrtValue? inputTensor;
     Map<String, OrtValue>? outputs;
 
     try {
       final decoded = img.decodeImage(imageBytes);
-      if (decoded == null) return Result.error(const ImageDecodeFailure());
+      if (decoded == null) throw const ImageDecodeFailure();
 
       final original = img.bakeOrientation(decoded);
 
@@ -53,7 +52,7 @@ class OnnxMuzzleDetectorService implements MuzzleDetectorService {
 
       final boundingBox = postprocess(rawOutput, letterbox);
 
-      if (boundingBox == null) return Result.ok(null);
+      if (boundingBox == null) return null;
 
       final cropped = img.copyCrop(
         original,
@@ -63,15 +62,11 @@ class OnnxMuzzleDetectorService implements MuzzleDetectorService {
         height: boundingBox.height.round(),
       );
 
-      return Result.ok(
-        MuzzleDetection(
-          boundingBox: boundingBox,
-          fullImage: imageBytes,
-          croppedImage: img.encodeJpg(cropped),
-        ),
+      return MuzzleDetection(
+        boundingBox: boundingBox,
+        fullImage: imageBytes,
+        croppedImage: img.encodeJpg(cropped),
       );
-    } catch (e) {
-      return Result.error(e is Exception ? e : Exception(e.toString()));
     } finally {
       await inputTensor?.dispose();
       for (final output in outputs?.values ?? const <OrtValue>[]) {

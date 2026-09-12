@@ -63,5 +63,17 @@
   "muzzleRetryAction": "TRY AGAIN",
 
   "dateFieldPlaceholder": "mm/dd/yyyy",
-  "dateFieldToday": "Today"
+  "dateFieldToday": "Today",
+
+  "registerSaved": "Animal registered",
+  "registerSaveFailed": "Could not save. Try again",
+
+  "identifyMatchedTitle": "ANIMAL FOUND",
+  "identifyUnknownTitle": "NOT RECOGNIZED",
+  "identifyNoMuzzleTitle": "NO MUZZLE FOUND",
+  "identifyFailedTitle": "COULD NOT READ IT",
+  "identifyDetectionLabel": "DETECTION",
+  "identifySimilarityLabel": "SIMILARITY",
+  "identifyAnimalLabel": "TAG",
+  "identifyNoneEnrolled": "No animals enrolled yet"
 }

@@ -149,4 +149,34 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get dateFieldToday => 'Today';
+
+  @override
+  String get registerSaved => 'Animal registered';
+
+  @override
+  String get registerSaveFailed => 'Could not save. Try again';
+
+  @override
+  String get identifyMatchedTitle => 'ANIMAL FOUND';
+
+  @override
+  String get identifyUnknownTitle => 'NOT RECOGNIZED';
+
+  @override
+  String get identifyNoMuzzleTitle => 'NO MUZZLE FOUND';
+
+  @override
+  String get identifyFailedTitle => 'COULD NOT READ IT';
+
+  @override
+  String get identifyDetectionLabel => 'DETECTION';
+
+  @override
+  String get identifySimilarityLabel => 'SIMILARITY';
+
+  @override
+  String get identifyAnimalLabel => 'TAG';
+
+  @override
+  String get identifyNoneEnrolled => 'No animals enrolled yet';
 }

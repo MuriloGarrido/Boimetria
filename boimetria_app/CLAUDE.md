@@ -30,8 +30,8 @@ Flutter app for cattle identification by muzzle biometrics. MVVM with Riverpod.
 
 ## Errors
 
-- Expected failures the caller must handle go in `Result`. A method returning
-  `Result` must not throw `Exception`.
+- Expected failures throw typed exceptions. The view model catches them at the
+  call site and turns them into UI state.
 - `Error` means a bug: let it propagate. Never `catch (e)` without a type.
 - The data layer never writes user-facing copy. It throws typed exceptions; the
   view model turns them into text.

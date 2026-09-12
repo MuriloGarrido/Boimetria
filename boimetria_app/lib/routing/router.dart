@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'dart:typed_data';
 
 import '../ui/home/widgets/home_screen.dart';
-import '../ui/identify/identify_result_screen.dart';
+import '../ui/identify/widgets/identify_result_screen.dart';
 import '../ui/register/widgets/register_bovine_screen.dart';
 
 /// Tabela central de rotas do app. Cada [GoRoute] mapeia um caminho para

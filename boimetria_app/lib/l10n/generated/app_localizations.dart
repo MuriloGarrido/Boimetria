@@ -349,6 +349,66 @@ abstract class AppLocalizations {
   /// In pt, this message translates to:
   /// **'Hoje'**
   String get dateFieldToday;
+
+  /// No description provided for @registerSaved.
+  ///
+  /// In pt, this message translates to:
+  /// **'Animal cadastrado'**
+  String get registerSaved;
+
+  /// No description provided for @registerSaveFailed.
+  ///
+  /// In pt, this message translates to:
+  /// **'Não deu pra salvar. Tente de novo'**
+  String get registerSaveFailed;
+
+  /// No description provided for @identifyMatchedTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'ANIMAL ENCONTRADO'**
+  String get identifyMatchedTitle;
+
+  /// No description provided for @identifyUnknownTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'NÃO RECONHECI'**
+  String get identifyUnknownTitle;
+
+  /// No description provided for @identifyNoMuzzleTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'NÃO ACHEI O FOCINHO'**
+  String get identifyNoMuzzleTitle;
+
+  /// No description provided for @identifyFailedTitle.
+  ///
+  /// In pt, this message translates to:
+  /// **'NÃO DEU PRA LER'**
+  String get identifyFailedTitle;
+
+  /// No description provided for @identifyDetectionLabel.
+  ///
+  /// In pt, this message translates to:
+  /// **'DETECÇÃO'**
+  String get identifyDetectionLabel;
+
+  /// No description provided for @identifySimilarityLabel.
+  ///
+  /// In pt, this message translates to:
+  /// **'SEMELHANÇA'**
+  String get identifySimilarityLabel;
+
+  /// No description provided for @identifyAnimalLabel.
+  ///
+  /// In pt, this message translates to:
+  /// **'IDENTIFICADOR'**
+  String get identifyAnimalLabel;
+
+  /// No description provided for @identifyNoneEnrolled.
+  ///
+  /// In pt, this message translates to:
+  /// **'Nenhum animal cadastrado ainda'**
+  String get identifyNoneEnrolled;
 }
 
 class _AppLocalizationsDelegate
