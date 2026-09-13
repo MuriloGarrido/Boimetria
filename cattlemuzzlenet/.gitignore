@@ -6,6 +6,12 @@
 # Ferramentas de uso local (ex: generate_splits.py), fora do repo.
 /scripts/
 
+# ------------------------------------------------------------- experimentos
+# Versiona notebooks e metricas (csv/json); pesos e modelos sao grandes.
+experiments/**/*.ckpt
+experiments/**/*.pth
+experiments/**/*.onnx
+
 # ------------------------------------------------------------------- pesos
 # Checkpoints e exports. O app carrega o modelo de boimetria_app/assets/models/.
 /runs/
