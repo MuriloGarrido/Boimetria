@@ -1,11 +1,16 @@
 # ---------------------------------------------------------------- datasets
-# Arvores de imagens: grandes demais para o repo. A divisao NAO vive aqui -
-# vive em splits/*.json, que sao versionados.
+# Imagens e splits (datasets/<dataset>/{images,splits}): fora do repo.
 /datasets/
+
+# ----------------------------------------------------------------- scripts
+# Ferramentas de uso local (ex: generate_splits.py), fora do repo.
+/scripts/
 
 # ------------------------------------------------------------------- pesos
 # Checkpoints e exports. O app carrega o modelo de boimetria_app/assets/models/.
 /runs/
+/weights/*
+!/weights/*.json
 *.pth
 *.onnx
 
@@ -13,7 +18,5 @@
 /venv/
 __pycache__/
 *.py[cod]
+*.egg-info/
 .claude/settings.local.json
-
-# splits/*.json e eval_results/*.json SAO versionados de proposito: definem o
-# protocolo de avaliacao e guardam os numeros que vao para a monografia.

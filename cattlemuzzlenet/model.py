@@ -3,38 +3,12 @@ import torch
 from torch import nn
 import torch.nn.functional as F
 
-class DeployEncoder(nn.Module):
-    def __init__(self, encoder, mean, std):
-        super().__init__()
-        self.encoder = encoder
-        self.register_buffer("mean", torch.tensor(mean).view(1, 3, 1, 1) * 255)
-        self.register_buffer("std", torch.tensor(std).view(1, 3, 1, 1) * 255)
+MEAN = (0.485, 0.456, 0.406)
+STD = (0.229, 0.224, 0.225)
 
-    def forward(self, x):
-        return self.encoder((x - self.mean) / self.std)
-
-class SiameseNet(nn.Module):
-    def __init__(self):
-        super().__init__()
-        self.encoder = CattleMuzzleNet()
-
-    def forward(self, x1, x2):
-        return F.pairwise_distance(self.encoder(x1), self.encoder(x2))
-
-class CattleMuzzleNet(nn.Module):
-    def __init__(self):
-        super().__init__()
-        self.backbone = timm.create_model('mobilevit_s', num_classes=0)
-        ch2 = self.backbone.feature_info[2]['num_chs']
-        ch3 = self.backbone.feature_info[3]['num_chs']
-        self.backbone.stages[2] = nn.Sequential(self.backbone.stages[2], EMA(ch2))
-        self.backbone.stages[3] = nn.Sequential(self.backbone.stages[3], EMA(ch3))
-
-    def forward(self, x):
-        return F.normalize(self.backbone(x), p=2, dim=1)
 
 class EMA(nn.Module):
-    
+
     def __init__(self, channels, c2=None, factor=32):
         super(EMA, self).__init__()
         self.groups = factor
@@ -62,3 +36,28 @@ class EMA(nn.Module):
         x22 = x1.reshape(b * self.groups, c // self.groups, -1)  # b*g, c//g, hw
         weights = (torch.matmul(x11, x12) + torch.matmul(x21, x22)).reshape(b * self.groups, 1, h, w)
         return (group_x * weights.sigmoid()).reshape(b, c, h, w)
+
+
+class CattleMuzzleNet(nn.Module):
+
+    def __init__(self):
+        super().__init__()
+        self.backbone = timm.create_model('mobilevit_s', num_classes=0)
+        ch2 = self.backbone.feature_info[2]['num_chs']
+        ch3 = self.backbone.feature_info[3]['num_chs']
+        self.backbone.stages[2] = nn.Sequential(self.backbone.stages[2], EMA(ch2))
+        self.backbone.stages[3] = nn.Sequential(self.backbone.stages[3], EMA(ch3))
+
+    def forward(self, x):
+        return F.normalize(self.backbone(x), p=2, dim=1)
+
+
+class DeployEncoder(nn.Module):
+    def __init__(self, encoder):
+        super().__init__()
+        self.encoder = encoder
+        self.register_buffer("mean", torch.tensor(MEAN).view(1, 3, 1, 1) * 255)
+        self.register_buffer("std", torch.tensor(STD).view(1, 3, 1, 1) * 255)
+
+    def forward(self, x):
+        return self.encoder((x - self.mean) / self.std)
